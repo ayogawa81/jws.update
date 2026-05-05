@@ -98,7 +98,7 @@
     </div>
 
     <marquee id="disp-run" loop="1" scrollamount="5">STAF LOG KORPASGAT</marquee>
-
+    
     <div id="panel">
         <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
         <b>Nama Satuan:</b>
@@ -237,24 +237,7 @@ function tutupModal() {
             p.style.display = (p.style.display === "block") ? "none" : "block"; 
         }
 
-     // --- 1. LOGIKA JAM & TANGGAL (MULAI BARIS 241) ---
-window.onload = function() {
-    if(typeof muatData === "function") muatData(); 
-    if(typeof updateWaktu === "function") {
-        updateWaktu(); 
-        setInterval(updateWaktu, 1000);
-    }
-
-    // Inisialisasi teks pertama kali saat web dibuka
-    const teksDefault = "SELAMAT DATANG DI STAF LOG KORPASGAT, KOMANDO!";
-    const raw = localStorage.getItem('tJalan') || teksDefault;
-    const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
-    if (elMarquee && daftar.length > 0) {
-        elMarquee.innerText = daftar[0];
-    }
-};
-
-// --- 2. LOGIKA FINAL ANTREAN RUNNING TEXT ---
+    // --- KODE STABIL: JAM + RUNNING TEXT ---
 const elMarquee = document.getElementById('disp-run');
 let indeksPesan = 0;
 
@@ -263,21 +246,31 @@ function jalankanAntrean() {
     const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
     
     if (daftar.length > 1) {
-        // Pindah ke kalimat selanjutnya
         indeksPesan = (indeksPesan + 1) % daftar.length;
         elMarquee.innerText = daftar[indeksPesan];
-        
-        // Paksa marquee mulai lagi dari awal agar sinkron
         elMarquee.stop();
         elMarquee.start();
     }
 }
 
-// Pasang pendeteksi teks habis
-if (elMarquee) {
-    elMarquee.onfinish = jalankanAntrean;
-    elMarquee.addEventListener('finish', jalankanAntrean);
-}
+window.onload = function() {
+    // 1. Jalankan Jam & Data (WAJIB)
+    if(typeof muatData === "function") muatData(); 
+    if(typeof updateWaktu === "function") {
+        updateWaktu(); 
+        setInterval(updateWaktu, 1000);
+    }
+
+    // 2. Jalankan Running Text
+    const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
+    const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
+    
+    if (elMarquee) {
+        if (daftar.length > 0) elMarquee.innerText = daftar[0];
+        elMarquee.onfinish = jalankanAntrean;
+        elMarquee.addEventListener('finish', jalankanAntrean);
+    }
+};
     </script>
 </body>
 </html>

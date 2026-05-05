@@ -256,14 +256,18 @@ window.onload = function() {
 const elMarquee = document.getElementById('disp-run');
 
 function updateTeks() {
-    const teksDefault = "SELAMAT DATANG DI STAF LOG KORPASGAT, Sholatlah Kalian sebagaimana Kalian Melihat Aku Sholat (HR. Bukhari), Jika pekerjaan adalah alasan kenapa kamu melewatkan salat maka tidak akan ada keberkahan dari penghasilan yang kamu peroleh dan pekerjaan itu tidak layak bagimu";
+    const teksDefault = "SELAMAT DATANG DI STAF LOG KORPASGAT , KOMANDO!";
     const raw = localStorage.getItem('tJalan') || teksDefault;
-    const daftar = raw.split(',').map(t => t.trim());
+    
+    // Perbaikan: Memastikan pemisahan koma lebih akurat
+    const daftar = raw.split(',').filter(t => t.trim() !== "").map(t => t.trim());
     
     let currentIndex = daftar.indexOf(elMarquee.innerText);
     let nextIndex = (currentIndex + 1) % daftar.length;
     
-    elMarquee.innerText = daftar[nextIndex];
+    if (daftar.length > 0) {
+        elMarquee.innerText = daftar[nextIndex];
+    }
 }
 
 // Pasang fungsi agar teks berganti saat putaran selesai

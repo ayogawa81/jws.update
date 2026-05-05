@@ -169,44 +169,46 @@
             cekAdzan(h + ":" + m);
         }
 
-        // --- 3. LOGIKA ANTREAN RUNNING TEXT ---
-        function jalankanAntrean() {
+        // --- 3. LOGIKA ANTREAN RUNNING TEXT (VERSI FINAL STABIL) ---
+function jalankanAntrean() {
     const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
     const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
     
-    if (daftar.length > 1) {
+    if (daftar.length > 0) {
+        // Pindah ke pesan berikutnya
         indeksPesan = (indeksPesan + 1) % daftar.length;
         elMarquee.innerText = daftar[indeksPesan];
         
-        // Paksa browser menganggap ini putaran baru
+        // RESET LOOP: Ini kunci agar teks 2, 3, dst mau muncul
         elMarquee.loop = 1; 
         elMarquee.stop();
         elMarquee.start();
     }
 }
-      // --- 4. STARTUP SYSTEM ---
+
+// --- 4. STARTUP SYSTEM ---
 window.onload = function() {
+    // Jalankan Jam & Data
     muatData(); 
     updateWaktu(); 
     setInterval(updateWaktu, 1000);
 
+    // Inisialisasi Teks Pertama
     const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
     const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
     
     if (elMarquee) {
         if (daftar.length > 0) {
             elMarquee.innerText = daftar[0];
-            // Kunci utama: set loop ke 1 agar onfinish aktif
-            elMarquee.loop = 1; 
+            elMarquee.loop = 1; // Set loop 1 agar onfinish terpancing
         }
         
-        // Pancing antrean berikutnya setiap kali teks habis di layar
+        // Pancing fungsi ganti teks setiap kali kalimat habis tuntas di layar
         elMarquee.onfinish = function() {
             jalankanAntrean();
         };
     }
 };
-
         // --- FUNGSI PENDUKUNG ---
         function cekAdzan(hm) {
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {

@@ -239,31 +239,31 @@ function tutupModal() {
 
         window.onload = () => { muatData(); updateWaktu(); setInterval(updateWaktu, 1000); };
         // --- KODE PALING BAWAH: ANTREAN RUNNING TEXT ---
-const elMarquee = document.getElementById('disp-run');
+        const elMarquee = document.getElementById('disp-run');
 
-// Fungsi untuk mengganti teks setelah satu putaran habis
-elMarquee.addEventListener('finish', () => {
-    // 1. Ambil daftar kalimat dari pengaturan (yang dipisah koma)
-    const raw = localStorage.getItem('tJalan') || "KOMANDO!";
-    const daftar = raw.split(',').map(t => t.trim());
-    
-    // 2. Tentukan teks mana yang sedang tampil
-    let currentIndex = daftar.indexOf(elMarquee.innerText);
-    
-    // 3. Ambil teks urutan selanjutnya
-    let nextIndex = (currentIndex + 1) % daftar.length;
-    
-    // 4. Update teks dan jalankan kembali
-    elMarquee.innerText = daftar[nextIndex];
-    elMarquee.start();
-});
+        // Fungsi untuk mengganti teks setelah satu putaran habis
+        elMarquee.addEventListener('finish', () => {
+            // 1. Ambil daftar kalimat dari pengaturan (yang dipisah koma)
+            const raw = localStorage.getItem('tJalan') || "KOMANDO!";
+            const daftar = raw.split(',').map(t => t.trim());
+            
+            // 2. Tentukan teks mana yang sedang tampil
+            let currentIndex = daftar.indexOf(elMarquee.innerText);
+            
+            // 3. Ambil teks urutan selanjutnya
+            let nextIndex = (currentIndex + 1) % daftar.length;
+            
+            // 4. Update teks dan jalankan kembali
+            elMarquee.innerText = daftar[nextIndex];
+            elMarquee.start();
+        });
 
-// Jalankan fungsi pertama kali saat halaman dibuka
-window.addEventListener('load', () => {
-    const raw = localStorage.getItem('tJalan') || "KOMANDO!";
-    const daftar = raw.split(',').map(t => t.trim());
-    if(daftar.length > 0) elMarquee.innerText = daftar[0];
-});
+        // Jalankan fungsi pertama kali saat halaman dibuka
+        window.addEventListener('load', () => {
+            const raw = localStorage.getItem('tJalan') || "KOMANDO!";
+            const daftar = raw.split(',').map(t => t.trim());
+            if(daftar.length > 0) elMarquee.innerText = daftar[0];
+        });
     </script>
 </body>
 </html>

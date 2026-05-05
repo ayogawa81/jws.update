@@ -169,18 +169,26 @@
         cekAdzan(h + ":" + m);
     }
 
-    // --- KODE REVISI: ANTREAN RUNNING TEXT ---
-function jalankanAntrean() {
+  // --- LOGIKA ANTREAN TEKS ANTI-TERPOTONG ---
+let indeksPesan = 0;
+
+function jalankanSiklusTeks() {
     const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
     const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
     
-    if (daftar.length > 1) {
-        indeksPesan = (indeksPesan + 1) % daftar.length;
+    if (daftar.length > 0) {
+        // 1. Ambil pesan sesuai urutan
+        elMarquee.innerText = daftar[indeksPesan];
         
-        // Hentikan dulu, ganti teks, lalu jalankan lagi agar browser 'sadar' ada perubahan
+        // 2. Pastikan loop diset ke 1 agar trigger 'onfinish' menyala saat teks habis
+        elMarquee.loop = 1;
+        
+        // 3. Jalankan ulang marquee
         elMarquee.stop();
-        elMarquee.innerHTML = daftar[indeksPesan];
         elMarquee.start();
+
+        // 4. Siapkan indeks untuk pesan berikutnya
+        indeksPesan = (indeksPesan + 1) % daftar.length;
     }
 }
 
@@ -190,19 +198,14 @@ window.onload = function() {
     updateWaktu(); 
     setInterval(updateWaktu, 1000);
 
-    const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
-    const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
-    
     if (elMarquee) {
-        // Set pesan pertama
-        if (daftar.length > 0) elMarquee.innerHTML = daftar[0];
+        // Jalankan siklus pertama
+        jalankanSiklusTeks();
         
-        // Gunakan 'onbounce' atau 'onfinish' tergantung perilaku browser
-        // Untuk marquee standar, kita gunakan listener ini:
-        elMarquee.onstart = jalankanAntrean; 
-        
-        // Tambahan agar lebih pasti di berbagai browser:
-        elMarquee.addEventListener('start', jalankanAntrean);
+        // Setiap kali teks SELESAI (habis di layar), jalankan fungsi lagi
+        elMarquee.onfinish = function() {
+            jalankanSiklusTeks();
+        };
     }
 };
 

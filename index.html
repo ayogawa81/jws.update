@@ -97,7 +97,7 @@
         <div class="card" id="c-isya"><h3>ISYA</h3><p id="t-isya">18:54</p></div>
     </div>
 
-    <marquee id="disp-run" loop="1" scrollamount="5">STAF LOG KORPASGAT</marquee>
+    <marquee id="disp-run" scrollamount="5">STAF LOG KORPASGAT</marquee>
     
     <div id="panel">
         <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
@@ -169,18 +169,24 @@
             cekAdzan(h + ":" + m);
         }
 
-        // --- 3. LOGIKA ANTREAN RUNNING TEXT ---
-        function jalankanAntrean() {
-            const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
-            const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
-            
-            if (daftar.length > 1) {
-                indeksPesan = (indeksPesan + 1) % daftar.length;
-                elMarquee.innerText = daftar[indeksPesan];
-                elMarquee.stop();
-                elMarquee.start();
-            }
-        }
+       // --- LOGIKA ANTREAN TEKS TERUS-MENERUS ---
+const elMarquee = document.getElementById('disp-run');
+let indeksPesan = 0;
+
+function gantiTeksBerikutnya() {
+    const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
+    const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
+    
+    if (daftar.length > 1) {
+        indeksPesan = (indeksPesan + 1) % daftar.length;
+        elMarquee.innerText = daftar[indeksPesan];
+    }
+}
+
+// Deteksi setiap kali teks masuk kembali ke sisi layar (mulai siklus baru)
+if (elMarquee) {
+    elMarquee.addEventListener('start', gantiTeksBerikutnya);
+}
 
         // --- 4. STARTUP SYSTEM ---
         window.onload = function() {

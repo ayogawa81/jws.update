@@ -3,53 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT - FINAL STABIL</title>
+    <title>JWS KORPASGAT - FINAL</title>
     <style>
-        body { background: black; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; margin: 0; }
+        body { background: black; color: white; font-family: sans-serif; overflow: hidden; margin: 0; }
         
-        /* Background Slideshow */
+        /* Slideshow Background */
         .slideshow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .slide { position: absolute; width: 100%; height: 100%; opacity: 0; transition: opacity 2s ease-in-out; background-size: cover; background-position: center; }
         .slide.active { opacity: 1; }
 
-        .header { text-align: center; color: #ffcc00; font-size: 45px; font-weight: bold; padding: 15px; text-transform: uppercase; text-shadow: 3px 3px 5px rgba(0,0,0,0.8); }
+        .header { text-align: center; color: #ffcc00; font-size: 40px; font-weight: bold; padding: 10px; text-transform: uppercase; text-shadow: 2px 2px 4px black; }
+        .clock-container { text-align: center; margin-top: 20px; }
+        #jam { font-size: 180px; font-weight: bold; line-height: 1; text-shadow: 4px 4px 10px black; }
+        .date-container { display: flex; justify-content: center; gap: 20px; margin-top: 10px; }
+        .date-box { background: rgba(0,0,0,0.6); padding: 10px 30px; border-radius: 50px; border: 2px solid #ffcc00; font-size: 24px; font-weight: bold; }
         
-        .clock-container { text-align: center; margin-top: 30px; background: rgba(0,0,0,0.4); display: inline-block; padding: 20px 50px; border-radius: 20px; position: relative; left: 50%; transform: translateX(-50%); }
-        #jam { font-size: 160px; font-weight: bold; line-height: 1; text-shadow: 5px 5px 10px rgba(0,0,0,0.9); }
+        .running-text-container { position: fixed; bottom: 120px; width: 100%; background: rgba(0,0,0,0.8); border-top: 2px solid #ffcc00; border-bottom: 2px solid #ffcc00; padding: 10px 0; }
+        #disp-run { font-size: 35px; font-weight: bold; color: white; }
         
-        .date-container { display: flex; justify-content: center; gap: 20px; margin-top: 15px; }
-        .date-box { background: rgba(0,0,0,0.7); padding: 10px 30px; border-radius: 50px; border: 2px solid #ffcc00; font-size: 24px; font-weight: bold; }
-        
-        .running-text-container { position: fixed; bottom: 130px; width: 100%; background: rgba(0,0,0,0.8); border-top: 3px solid #ffcc00; border-bottom: 3px solid #ffcc00; padding: 12px 0; }
-        #disp-run { font-size: 38px; font-weight: bold; color: white; text-transform: uppercase; }
+        .adzan-container { position: fixed; bottom: 0; width: 100%; display: grid; grid-template-columns: repeat(5, 1fr); background: black; border-top: 2px solid #ffcc00; }
+        .adzan-box { text-align: center; padding: 15px; border-right: 1px solid #333; }
+        .adzan-box h3 { margin: 0; font-size: 18px; color: #ffcc00; text-transform: uppercase; }
+        .adzan-box p { margin: 5px 0 0; font-size: 45px; font-weight: bold; }
 
-        .adzan-container { position: fixed; bottom: 0; width: 100%; display: grid; grid-template-columns: repeat(5, 1fr); background: rgba(0,0,0,0.9); border-top: 2px solid #ffcc00; }
-        .adzan-box { text-align: center; padding: 15px; border-right: 1px solid #444; }
-        .adzan-box.active-now { background: rgba(255, 204, 0, 0.3); }
-        .adzan-box h3 { margin: 0; font-size: 20px; color: #ffcc00; text-transform: uppercase; }
-        .adzan-box p { margin: 5px 0 0; font-size: 50px; font-weight: bold; }
-
-        #audio-status { position: fixed; right: 20px; bottom: 160px; background: #00a859; color: white; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; display: none; box-shadow: 0 0 15px rgba(0,168,89,0.5); }
-        .settings-btn { position: fixed; top: 20px; right: 20px; cursor: pointer; font-size: 30px; opacity: 0.6; z-index: 10; }
-        
-        /* Modal & Panel */
-        #panel { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a1a; padding: 25px; border: 3px solid #ffcc00; display: none; z-index: 100; width: 350px; border-radius: 15px; }
-        input { width: 100%; margin: 10px 0; padding: 12px; box-sizing: border-box; background: #333; color: white; border: 1px solid #555; }
-        button { width: 100%; padding: 12px; background: #ffcc00; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; border-radius: 5px; }
-        
-        #modal-azan { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        #audio-status { position: fixed; right: 20px; bottom: 150px; background: green; color: white; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; display: none; }
+        .settings-btn { position: fixed; top: 10px; right: 10px; cursor: pointer; opacity: 0.5; z-index: 10; }
+        #panel { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; padding: 20px; border: 2px solid #ffcc00; display: none; z-index: 100; width: 300px; }
+        input { width: 100%; margin: 10px 0; padding: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #ffcc00; border: none; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body onclick="aktifkanAudio()">
+
+    <div class="settings-btn" onclick="togglePanel()">⚙️</div>
 
     <!-- Background Slideshow -->
     <div class="slideshow">
         <div class="slide active" style="background-image: url('https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/background1.jpg');"></div>
         <div class="slide" style="background-image: url('https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/background2.jpg');"></div>
-        <div class="slide" style="background-image: url('https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/background3.jpg');"></div>
     </div>
 
-    <div class="settings-btn" onclick="togglePanel()">⚙️</div>
     <div class="header" id="n-satuan">STAFLOG KORPASGAT</div>
 
     <div class="clock-container">
@@ -63,33 +56,25 @@
     <div id="audio-status">● AUDIO SIAP (KOMANDO)</div>
 
     <div class="running-text-container">
-        <marquee id="disp-run" scrollamount="8"></marquee>
+        <marquee id="disp-run" scrollamount="7"></marquee>
     </div>
 
     <div class="adzan-container">
-        <div class="adzan-box" id="c-subuh"><h3>Subuh</h3><p id="t-subuh">04:31</p></div>
-        <div class="adzan-box" id="c-dzuhur"><h3>Dzuhur</h3><p id="t-dzuhur">11:47</p></div>
-        <div class="adzan-box" id="c-ashar"><h3>Ashar</h3><p id="t-ashar">15:08</p></div>
-        <div class="adzan-box" id="c-maghrib"><h3>Maghrib</h3><p id="t-maghrib">17:43</p></div>
-        <div class="adzan-box" id="c-isya"><h3>Isya</h3><p id="t-isya">18:54</p></div>
+        <div class="adzan-box"><h3>Subuh</h3><p id="t-subuh">04:31</p></div>
+        <div class="adzan-box"><h3>Dzuhur</h3><p id="t-dzuhur">11:47</p></div>
+        <div class="adzan-box"><h3>Ashar</h3><p id="t-ashar">15:08</p></div>
+        <div class="adzan-box"><h3>Maghrib</h3><p id="t-maghrib">17:43</p></div>
+        <div class="adzan-box"><h3>Isya</h3><p id="t-isya">18:54</p></div>
     </div>
 
-    <!-- Modal Adzan -->
-    <div id="modal-azan">
-        <h1 style="font-size: 80px; color: #ffcc00; margin-bottom: 0;">WAKTUNYA ADZAN</h1>
-        <h2 id="azan-name" style="font-size: 60px; text-transform: uppercase;">SUBUH</h2>
-        <button onclick="tutupModal()" style="width: 200px; font-size: 20px;">TUTUP</button>
-    </div>
-
-    <!-- Panel Setting -->
     <div id="panel">
-        <h3 style="color:#ffcc00; margin-top:0; text-align:center;">PENGATURAN UNIT</h3>
+        <h3 style="color:#ffcc00; margin-top:0;">PENGATURAN</h3>
         <label>Nama Satuan:</label>
         <input type="text" id="in-nama">
-        <label>Running Text (Satu Kalimat):</label>
+        <label>Running Text:</label>
         <input type="text" id="in-run">
         <button onclick="saveData()">SIMPAN & REFRESH</button>
-        <button onclick="togglePanel()" style="background:#444; color:white;">BATAL</button>
+        <button onclick="togglePanel()" style="background:#444; color:white; margin-top:5px;">BATAL</button>
     </div>
 
     <audio id="mainPlayer"></audio>
@@ -98,8 +83,6 @@
         const player = document.getElementById('mainPlayer');
         const elMarquee = document.getElementById('disp-run');
         let audioReady = false;
-        let sudahBunyi = "";
-        const baseURL = "https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/";
 
         // 1. SLIDESHOW LOGIC
         let currentSlide = 0;
@@ -109,29 +92,21 @@
             currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add('active');
         }
-        setInterval(nextSlide, 10000); // Ganti gambar tiap 10 detik
+        setInterval(nextSlide, 10000);
 
         // 2. JAM & TANGGAL
         function updateWaktu() {
             const now = new Date();
-            const h = String(now.getHours()).padStart(2, '0');
-            const m = String(now.getMinutes()).padStart(2, '0');
-            const s = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('jam').innerText = `${h}:${m}:${s}`;
+            document.getElementById('jam').innerText = now.getHours().toString().padStart(2, '0') + ":" + 
+                                                        now.getMinutes().toString().padStart(2, '0') + ":" + 
+                                                        now.getSeconds().toString().padStart(2, '0');
             
             const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
             const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            document.getElementById('tgl-masehi').innerText = `${hari[now.getDay()]}, ${now.getDate()} ${bulan[now.getMonth()]} ${now.getFullYear()}`;
-
-            try {
-                const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', {day:'numeric', month:'long', year:'numeric'}).format(now);
-                document.getElementById('tgl-hijriah').innerText = hijri;
-            } catch(e) {}
-
-            cekAdzan(`${h}:${m}`);
+            document.getElementById('tgl-masehi').innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
         }
 
-        // 3. AUDIO SYSTEM
+        // 3. AUDIO UNLOCK
         function aktifkanAudio() {
             if(!audioReady) {
                 audioReady = true;
@@ -141,43 +116,21 @@
             }
         }
 
-        function cekAdzan(hm) {
-            const jadwal = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
-            jadwal.forEach(s => {
-                const target = document.getElementById('t-' + s).innerText;
-                const card = document.getElementById('c-' + s);
-                if(hm === target) {
-                    card.classList.add('active-now');
-                    if(audioReady && sudahBunyi !== s) {
-                        sudahBunyi = s;
-                        document.getElementById('modal-azan').style.display = "flex";
-                        document.getElementById('azan-name').innerText = s;
-                        let file = (s === "ashar") ? "AdzanMalaysia.mp3" : (s === "dzuhur" || s === "maghrib" ? "Azansupri.mp3" : s.charAt(0).toUpperCase() + s.slice(1) + ".mp3");
-                        player.src = baseURL + file;
-                        player.play();
-                    }
-                } else {
-                    card.classList.remove('active-now');
-                    if(sudahBunyi === s && hm !== target) sudahBunyi = "";
-                }
-            });
-        }
-
-        // 4. STARTUP & DATA
+        // 4. STARTUP
         window.onload = function() {
             updateWaktu();
             setInterval(updateWaktu, 1000);
 
             const nSat = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
-            const tJal = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
+            const teks = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
             
             document.getElementById('n-satuan').innerText = nSat;
             document.getElementById('in-nama').value = nSat;
-            document.getElementById('in-run').value = tJal;
-            
+            document.getElementById('in-run').value = teks;
+
             if (elMarquee) {
-                elMarquee.innerText = tJal;
-                elMarquee.removeAttribute('loop');
+                elMarquee.innerText = teks;
+                elMarquee.removeAttribute('loop'); 
                 elMarquee.start();
             }
         };
@@ -191,11 +144,6 @@
             localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
             localStorage.setItem('tJalan', document.getElementById('in-run').value);
             location.reload(); 
-        }
-
-        function tutupModal() {
-            document.getElementById('modal-azan').style.display = "none";
-            player.pause();
         }
     </script>
 </body>

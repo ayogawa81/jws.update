@@ -121,28 +121,26 @@
         <p onclick="togglePanel()" style="text-align:center; color:gray; cursor:pointer; margin-top:20px;">[ TUTUP ]</p>
     </div>
 
-  <script>
-    // --- 1. SETTING DASAR ---
+ <script>
     const elMarquee = document.getElementById('disp-run');
     let indeksPesan = 0;
 
-    // --- 2. FUNGSI GANTI TEKS (Hanya Jalan Setelah Kalimat Habis) ---
+    // --- 1. FUNGSI UTAMA TEKS (ANTI TERPOTONG) ---
     function jalankanSiklusTeks() {
         const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
         const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
         
         if (elMarquee && daftar.length > 0) {
             elMarquee.innerText = daftar[indeksPesan];
-            elMarquee.loop = 1; // Memaksa browser lapor kalau teks sudah habis
+            elMarquee.loop = 1; // Memicu event 'onfinish' saat teks habis di kiri
             elMarquee.stop();
             elMarquee.start();
             
-            // Siapkan urutan berikutnya
             indeksPesan = (indeksPesan + 1) % daftar.length;
         }
     }
 
-    // --- 3. FUNGSI JAM & TANGGAL ---
+    // --- 2. FUNGSI JAM ---
     function updateWaktu() {
         const now = new Date();
         const jamEl = document.getElementById('jam');
@@ -150,31 +148,29 @@
                                     now.getMinutes().toString().padStart(2, '0') + ":" + 
                                     now.getSeconds().toString().padStart(2, '0');
         
-        // Update Tanggal Masehi
         const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
         const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        const tglMasehi = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
-        if(document.getElementById('tgl-masehi')) document.getElementById('tgl-masehi').innerText = tglMasehi;
+        if(document.getElementById('tgl-masehi')) {
+            document.getElementById('tgl-masehi').innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
+        }
     }
 
-    // --- 4. STARTUP (Jalankan Semua Saat Halaman Terbuka) ---
+    // --- 3. STARTUP (JALANKAN SEMUA) ---
     window.onload = function() {
-        // Jalankan Jam
         updateWaktu();
         setInterval(updateWaktu, 1000);
 
-        // Jalankan Running Text
         if (elMarquee) {
             jalankanSiklusTeks();
-            elMarquee.onfinish = jalankanSiklusTeks; // PENTING: Ganti teks kalau sudah tuntas lewat
+            // PENTING: Ganti ke kalimat berikutnya hanya jika yang sekarang sudah lewat tuntas
+            elMarquee.onfinish = jalankanSiklusTeks; 
         }
         
-        // Muat Data Satuan dari Pengaturan
         const nSat = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
         if(document.getElementById('n-satuan')) document.getElementById('n-satuan').innerText = nSat;
     };
 
-    // --- 5. FUNGSI PANEL PENGATURAN ---
+    // --- 4. PANEL PENGATURAN ---
     function togglePanel() {
         const p = document.getElementById("panel");
         p.style.display = (p.style.display === "block") ? "none" : "block";
@@ -187,7 +183,7 @@
     function saveData() {
         localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
         localStorage.setItem('tJalan', document.getElementById('in-run').value);
-        location.reload(); // Refresh untuk terapkan perubahan
+        location.reload(); 
     }
 </script>
 </body>

@@ -256,7 +256,7 @@ window.onload = function() {
 const elMarquee = document.getElementById('disp-run');
 
 function updateTeks() {
-    const teksDefault = "SELAMAT DATANG DI STAF LOG KORPASGAT, Sholatlah Kalian sebagaimana Kalian Melihat Aku Sholat (HR. Bukhari).";
+    const teksDefault = "SELAMAT DATANG DI STAF LOG KORPASGAT, Sholatlah Kalian sebagaimana Kalian Melihat Aku Sholat (HR. Bukhari), Jika pekerjaan adalah alasan kenapa kamu melewatkan salat maka tidak akan ada keberkahan dari penghasilan yang kamu peroleh dan pekerjaan itu tidak layak bagimu";
     const raw = localStorage.getItem('tJalan') || teksDefault;
     const daftar = raw.split(',').map(t => t.trim());
     

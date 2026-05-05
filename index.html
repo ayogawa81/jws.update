@@ -171,42 +171,38 @@
 
         // --- 3. LOGIKA ANTREAN RUNNING TEXT ---
         function jalankanAntrean() {
-            const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
-            const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
-            
-            if (daftar.length > 1) {
-                indeksPesan = (indeksPesan + 1) % daftar.length;
-                elMarquee.innerText = daftar[indeksPesan];
-                elMarquee.stop();
-                elMarquee.start();
-            }
-        }
-
+    const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
+    const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
+    
+    if (daftar.length > 1) {
+        indeksPesan = (indeksPesan + 1) % daftar.length;
+        elMarquee.innerText = daftar[indeksPesan];
+        
+        // Paksa browser menganggap ini putaran baru
+        elMarquee.loop = 1; 
+        elMarquee.stop();
+        elMarquee.start();
+    }
+}
       // --- 4. STARTUP SYSTEM ---
 window.onload = function() {
-    // Jalankan Jam & Data
     muatData(); 
     updateWaktu(); 
     setInterval(updateWaktu, 1000);
 
-    // Inisialisasi Teks
     const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
     const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
     
     if (elMarquee) {
         if (daftar.length > 0) {
             elMarquee.innerText = daftar[0];
-            // WAJIB: Set loop ke 1 agar event 'onfinish' bisa terpancing
+            // Kunci utama: set loop ke 1 agar onfinish aktif
             elMarquee.loop = 1; 
         }
         
-        // Sinyal ganti teks saat running text habis di layar
+        // Pancing antrean berikutnya setiap kali teks habis di layar
         elMarquee.onfinish = function() {
             jalankanAntrean();
-            // Set loop lagi ke 1 setiap kali ganti teks baru
-            elMarquee.loop = 1;
-            elMarquee.stop();
-            elMarquee.start();
         };
     }
 };

@@ -68,7 +68,14 @@
         <div class="slide" style="background-image: url('bg5.jpg')"></div>
         <div class="slide" style="background-image: url('bg6.jpg')"></div>
     </div>
-
+    
+<!-- KOTAK POP-UP AZAN -->
+<div id="modal-azan" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+    <h1 style="font-size:6rem; color:#fbbf24; text-shadow: 0 0 20px #fbbf24; margin:0;">MEMASUKI WAKTU</h1>
+    <h2 id="azan-name" style="font-size:10rem; color:#fff; margin:0; text-transform:uppercase;">...</h2>
+    <button onclick="tutupModal()" style="margin-top:30px; padding:15px 40px; font-size:2rem; font-weight:bold; background:#ef4444; color:white; border:none; border-radius:10px; cursor:pointer;">TUTUP</button>
+</div>
+    
     <audio id="mainPlayer" preload="auto"></audio>
     <div id="audio-status">● AUDIO SIAP (KOMANDO)</div>
 
@@ -152,29 +159,46 @@
         }
 
         function cekAdzan(hm) {
-            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
-                const target = document.getElementById('t-' + s).innerText;
-                const card = document.getElementById('c-' + s);
-                if(hm === target) {
-                    card.classList.add('active-now');
-                    if(audioReady && sudahBunyi !== s) {
-                        let userInput = localStorage.getItem('s-' + s);
-                        let fileName = (userInput && userInput.trim() !== "") ? userInput.trim() : (s.charAt(0).toUpperCase() + s.slice(1) + ".mp3");
-                        if(s === "subuh") fileName = "subuh.mp3";
-                        if(s === "dzuhur") fileName = "Azansupri.mp3";
-                        if(s === "ashar") fileName = "AdzanMalaysia.mp3";
-                        if(s === "maghrib") fileName = "Azansupri.mp3";
-                        if(s === "isya") fileName = "Isya.mp3";
-                        sudahBunyi = s;
-                        player.src = baseURL + fileName;
-                        player.play();
-                    }
-                } else {
-                    card.classList.remove('active-now');
-                    if(sudahBunyi === s && hm !== target) sudahBunyi = "";
-                }
-            });
+    ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
+        const target = document.getElementById('t-' + s).innerText;
+        const card = document.getElementById('c-' + s);
+        
+        if(hm === target) {
+            card.classList.add('active-now');
+            
+            // JIKA WAKTU COCOK DAN BELUM TAMPIL
+            if(audioReady && sudahBunyi !== s) {
+                sudahBunyi = s;
+                
+                // MUNCULKAN POP-UP
+                document.getElementById('modal-azan').style.display = "flex";
+                document.getElementById('azan-name').innerText = s;
+
+                // PUTAR AUDIO (Sesuai setingan file Anda)
+                let userInput = localStorage.getItem('s-' + s);
+                let fileName = (userInput && userInput.trim() !== "") ? userInput.trim() : (s.charAt(0).toUpperCase() + s.slice(1) + ".mp3");
+                
+                // Penyesuaian nama file otomatis
+                if(s === "subuh") fileName = "subuh.mp3";
+                if(s === "dzuhur") fileName = "Azansupri.mp3";
+                if(s === "ashar") fileName = "AdzanMalaysia.mp3";
+                if(s === "maghrib") fileName = "Azansupri.mp3";
+                if(s === "isya") fileName = "Isya.mp3";
+                
+                player.src = baseURL + fileName;
+                player.play();
+            }
+        } else {
+            card.classList.remove('active-now');
+            if(sudahBunyi === s && hm !== target) sudahBunyi = "";
         }
+    });
+}
+
+// TAMBAHKAN FUNGSI INI DI BAWAHNYA UNTUK TOMBOL TUTUP
+function tutupModal() {
+    document.getElementById('modal-azan').style.display = "none";
+}
 
         function aktifkanAudio() {
             if(!audioReady) {

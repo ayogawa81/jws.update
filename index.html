@@ -238,32 +238,38 @@ function tutupModal() {
         }
 
         window.onload = () => { muatData(); updateWaktu(); setInterval(updateWaktu, 1000); };
-        // --- KODE PALING BAWAH: ANTREAN RUNNING TEXT ---
-        const elMarquee = document.getElementById('disp-run');
+        
+      // --- KODE ANTREAN RUNNING TEXT DENGAN TEKS DEFAULT ---
+const elMarquee = document.getElementById('disp-run');
 
-        // Fungsi untuk mengganti teks setelah satu putaran habis
-        elMarquee.addEventListener('finish', () => {
-            // 1. Ambil daftar kalimat dari pengaturan (yang dipisah koma)
-            const raw = localStorage.getItem('tJalan') || "KOMANDO!";
-            const daftar = raw.split(',').map(t => t.trim());
-            
-            // 2. Tentukan teks mana yang sedang tampil
-            let currentIndex = daftar.indexOf(elMarquee.innerText);
-            
-            // 3. Ambil teks urutan selanjutnya
-            let nextIndex = (currentIndex + 1) % daftar.length;
-            
-            // 4. Update teks dan jalankan kembali
-            elMarquee.innerText = daftar[nextIndex];
-            elMarquee.start();
-        });
+function updateTeks() {
+    // 1. Ambil data, jika kosong gunakan teks default di bawah ini
+    const teksDefault = "SELAMAT DATANG DI STAF LOG KORPASGAT, "Sholatlah Kalian sebagaimana Kalian Melihat Aku Sholat (HR. Bukhari)." , "Rumah yang Dibacakan Al-Qur'an akan Bercahaya bagi Penduduk Langit";
+    const raw = localStorage.getItem('tJalan') || teksDefault;
+    
+    // 2. Pecah teks berdasarkan koma
+    const daftar = raw.split(',').map(t => t.trim());
+    
+    // 3. Cari urutan saat ini dan ganti ke selanjutnya
+    let currentIndex = daftar.indexOf(elMarquee.innerText);
+    let nextIndex = (currentIndex + 1) % daftar.length;
+    
+    elMarquee.innerText = daftar[nextIndex];
+}
 
-        // Jalankan fungsi pertama kali saat halaman dibuka
-        window.addEventListener('load', () => {
-            const raw = localStorage.getItem('tJalan') || "KOMANDO!";
-            const daftar = raw.split(',').map(t => t.trim());
-            if(daftar.length > 0) elMarquee.innerText = daftar[0];
-        });
+// Pasang fungsi ke kejadian 'finish' (teks habis)
+elMarquee.onfinish = updateTeks;
+
+// Jalankan saat pertama kali halaman dibuka
+window.addEventListener('load', () => {
+    const teksDefault = "SELAMAT DATANG DI STAF LOG KORPASGAT, "Sholatlah Kalian sebagaimana Kalian Melihat Aku Sholat (HR. Bukhari)." , "Rumah yang Dibacakan Al-Qur'an akan Bercahaya bagi Penduduk Langit";
+    const raw = localStorage.getItem('tJalan') || teksDefault;
+    const daftar = raw.split(',').map(t => t.trim());
+    
+    if(daftar.length > 0) {
+        elMarquee.innerText = daftar[0];
+    }
+});
     </script>
 </body>
 </html>

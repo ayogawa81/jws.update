@@ -169,36 +169,42 @@
         cekAdzan(h + ":" + m);
     }
 
-    // --- 3. LOGIKA ANTREAN RUNNING TEXT ---
-    function jalankanAntrean() {
-        const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
-        const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
+    // --- KODE REVISI: ANTREAN RUNNING TEXT ---
+function jalankanAntrean() {
+    const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
+    const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
+    
+    if (daftar.length > 1) {
+        indeksPesan = (indeksPesan + 1) % daftar.length;
         
-        if (daftar.length > 1) {
-            indeksPesan = (indeksPesan + 1) % daftar.length;
-            elMarquee.innerText = daftar[indeksPesan];
-        }
+        // Hentikan dulu, ganti teks, lalu jalankan lagi agar browser 'sadar' ada perubahan
+        elMarquee.stop();
+        elMarquee.innerHTML = daftar[indeksPesan];
+        elMarquee.start();
     }
+}
 
-    // --- 4. STARTUP SYSTEM ---
-    window.onload = function() {
-        // Pastikan Data dimuat
-        muatData(); 
-        
-        // Jalankan Jam
-        updateWaktu(); 
-        setInterval(updateWaktu, 1000);
+// --- REVISI STARTUP SYSTEM ---
+window.onload = function() {
+    muatData(); 
+    updateWaktu(); 
+    setInterval(updateWaktu, 1000);
 
-        // Inisialisasi Teks Marquee
-        const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
-        const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
+    const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
+    const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
+    
+    if (elMarquee) {
+        // Set pesan pertama
+        if (daftar.length > 0) elMarquee.innerHTML = daftar[0];
         
-        if (elMarquee) {
-            if (daftar.length > 0) elMarquee.innerText = daftar[0];
-            // Event 'start' memicu penggantian teks setiap kali teks muncul lagi dari kanan
-            elMarquee.addEventListener('start', jalankanAntrean);
-        }
-    };
+        // Gunakan 'onbounce' atau 'onfinish' tergantung perilaku browser
+        // Untuk marquee standar, kita gunakan listener ini:
+        elMarquee.onstart = jalankanAntrean; 
+        
+        // Tambahan agar lebih pasti di berbagai browser:
+        elMarquee.addEventListener('start', jalankanAntrean);
+    }
+};
 
     // --- FUNGSI PENDUKUNG ---
     function cekAdzan(hm) {

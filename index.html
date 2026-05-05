@@ -182,23 +182,34 @@
             }
         }
 
-        // --- 4. STARTUP SYSTEM ---
-        window.onload = function() {
-            // Jalankan Jam & Data
-            muatData(); 
-            updateWaktu(); 
-            setInterval(updateWaktu, 1000);
+      // --- 4. STARTUP SYSTEM ---
+window.onload = function() {
+    // Jalankan Jam & Data
+    muatData(); 
+    updateWaktu(); 
+    setInterval(updateWaktu, 1000);
 
-            // Inisialisasi Teks
-            const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
-            const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
-            
-            if (elMarquee) {
-                if (daftar.length > 0) elMarquee.innerText = daftar[0];
-                // Sinyal ganti teks saat running text habis di layar
-                elMarquee.onfinish = jalankanAntrean;
-            }
+    // Inisialisasi Teks
+    const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
+    const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
+    
+    if (elMarquee) {
+        if (daftar.length > 0) {
+            elMarquee.innerText = daftar[0];
+            // WAJIB: Set loop ke 1 agar event 'onfinish' bisa terpancing
+            elMarquee.loop = 1; 
+        }
+        
+        // Sinyal ganti teks saat running text habis di layar
+        elMarquee.onfinish = function() {
+            jalankanAntrean();
+            // Set loop lagi ke 1 setiap kali ganti teks baru
+            elMarquee.loop = 1;
+            elMarquee.stop();
+            elMarquee.start();
         };
+    }
+};
 
         // --- FUNGSI PENDUKUNG ---
         function cekAdzan(hm) {

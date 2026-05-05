@@ -122,101 +122,72 @@
     </div>
 
   <script>
-    // --- 1. SLIDESHOW ---
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    function nextSlide() {
-        if(slides.length > 0) {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
-        }
-    }
-    setInterval(nextSlide, 10000); 
-
-    // --- 2. LOGIKA JAM & ADZAN ---
-    const player = document.getElementById('mainPlayer');
+    // --- 1. SETTING DASAR ---
     const elMarquee = document.getElementById('disp-run');
-    let audioReady = false;
-    let sudahBunyi = "";
-    const baseURL = "https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/";
-
-    function updateWaktu() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2, '0');
-        const m = String(now.getMinutes()).padStart(2, '0');
-        const s = String(now.getSeconds()).padStart(2, '0');
-        
-        const jamEl = document.getElementById('jam');
-        if(jamEl) jamEl.innerText = h + ":" + m + ":" + s;
-        
-        const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-        const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        
-        const tglMasehiEl = document.getElementById('tgl-masehi');
-        if(tglMasehiEl) tglMasehiEl.innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
-
-        try {
-            const optH = { day: 'numeric', month: 'long', year: 'numeric' };
-            const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
-            const tglHijriahEl = document.getElementById('tgl-hijriah');
-            if(tglHijriahEl) tglHijriahEl.innerText = hijri + " ";
-        } catch(e) { }
-        cekAdzan(h + ":" + m);
-    }
-
-    // --- 3. LOGIKA ANTREAN TEKS (TIDAK TERPOTONG) ---
     let indeksPesan = 0;
+
+    // --- 2. FUNGSI GANTI TEKS (Hanya Jalan Setelah Kalimat Habis) ---
     function jalankanSiklusTeks() {
         const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
         const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
         
         if (elMarquee && daftar.length > 0) {
             elMarquee.innerText = daftar[indeksPesan];
-            elMarquee.loop = 1; // Memicu event 'onfinish' saat teks habis
+            elMarquee.loop = 1; // Memaksa browser lapor kalau teks sudah habis
             elMarquee.stop();
             elMarquee.start();
+            
+            // Siapkan urutan berikutnya
             indeksPesan = (indeksPesan + 1) % daftar.length;
         }
     }
 
-    // --- 4. STARTUP (WAJIB SEPERTI INI) ---
-    function mulaiSistem() {
-        muatData(); 
-        updateWaktu(); 
-        setInterval(updateWaktu, 1000);
-
-        if (elMarquee) {
-            jalankanSiklusTeks();
-            elMarquee.onfinish = jalankanSiklusTeks; // Ganti saat kalimat habis tuntas
-        }
+    // --- 3. FUNGSI JAM & TANGGAL ---
+    function updateWaktu() {
+        const now = new Date();
+        const jamEl = document.getElementById('jam');
+        if(jamEl) jamEl.innerText = now.getHours().toString().padStart(2, '0') + ":" + 
+                                    now.getMinutes().toString().padStart(2, '0') + ":" + 
+                                    now.getSeconds().toString().padStart(2, '0');
+        
+        // Update Tanggal Masehi
+        const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+        const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const tglMasehi = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
+        if(document.getElementById('tgl-masehi')) document.getElementById('tgl-masehi').innerText = tglMasehi;
     }
 
-    // Gunakan dua lapis pengaman agar jam tidak 00:00:00 lagi
-    if (document.readyState === "complete") { mulaiSistem(); }
-    else { window.addEventListener('load', mulaiSistem); }
+    // --- 4. STARTUP (Jalankan Semua Saat Halaman Terbuka) ---
+    window.onload = function() {
+        // Jalankan Jam
+        updateWaktu();
+        setInterval(updateWaktu, 1000);
 
-    // --- 5. FUNGSI PENDUKUNG ---
-    function muatData() {
+        // Jalankan Running Text
+        if (elMarquee) {
+            jalankanSiklusTeks();
+            elMarquee.onfinish = jalankanSiklusTeks; // PENTING: Ganti teks kalau sudah tuntas lewat
+        }
+        
+        // Muat Data Satuan dari Pengaturan
         const nSat = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
         if(document.getElementById('n-satuan')) document.getElementById('n-satuan').innerText = nSat;
-        if(document.getElementById('in-nama')) document.getElementById('in-nama').value = nSat;
-        if(document.getElementById('in-run')) document.getElementById('in-run').value = localStorage.getItem('tJalan') || "";
+    };
+
+    // --- 5. FUNGSI PANEL PENGATURAN ---
+    function togglePanel() {
+        const p = document.getElementById("panel");
+        p.style.display = (p.style.display === "block") ? "none" : "block";
+        if(p.style.display === "block") {
+            document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "";
+            document.getElementById('in-run').value = localStorage.getItem('tJalan') || "";
+        }
     }
 
     function saveData() {
         localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
         localStorage.setItem('tJalan', document.getElementById('in-run').value);
-        location.reload();
-    }
-
-    function togglePanel() { 
-        const p = document.getElementById("panel");
-        if(p) p.style.display = (p.style.display === "block") ? "none" : "block"; 
-    }
-
-    function cekAdzan(hm) {
-        // Logika adzan Anda sudah benar, pastikan ID elemen sesuai
+        location.reload(); // Refresh untuk terapkan perubahan
     }
 </script>
 </body>

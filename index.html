@@ -122,21 +122,25 @@
     </div>
 
     <script>
-        // LOGIKA SLIDESHOW
+        // --- 1. LOGIKA SLIDESHOW ---
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
 
         function nextSlide() {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
+            if(slides.length > 0) {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }
         }
-        setInterval(nextSlide, 10000); // Ganti gambar setiap 10 detik
+        setInterval(nextSlide, 10000); 
 
-        // LOGIKA JWS (Sesuai kode awal kamu)
+        // --- 2. LOGIKA UTAMA JWS ---
         const player = document.getElementById('mainPlayer');
+        const elMarquee = document.getElementById('disp-run');
         let audioReady = false;
         let sudahBunyi = "";
+        let indeksPesan = 0;
         const baseURL = "https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/";
 
         function updateWaktu() {
@@ -144,61 +148,94 @@
             const h = String(now.getHours()).padStart(2, '0');
             const m = String(now.getMinutes()).padStart(2, '0');
             const s = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('jam').innerText = h + ":" + m + ":" + s;
+            
+            const jamEl = document.getElementById('jam');
+            if(jamEl) jamEl.innerText = h + ":" + m + ":" + s;
             
             const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
             const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            document.getElementById('tgl-masehi').innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
+            
+            const tglMasehiEl = document.getElementById('tgl-masehi');
+            if(tglMasehiEl) tglMasehiEl.innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
 
             try {
                 const optH = { day: 'numeric', month: 'long', year: 'numeric' };
                 const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
-                document.getElementById('tgl-hijriah').innerText = hijri + " ";
-            } catch(e) { document.getElementById('tgl-hijriah').innerText = "Update Kalender..."; }
+                const tglHijriahEl = document.getElementById('tgl-hijriah');
+                if(tglHijriahEl) tglHijriahEl.innerText = hijri + " ";
+            } catch(e) { 
+                if(document.getElementById('tgl-hijriah')) document.getElementById('tgl-hijriah').innerText = "Update Kalender..."; 
+            }
             cekAdzan(h + ":" + m);
         }
 
-        function cekAdzan(hm) {
-    ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
-        const target = document.getElementById('t-' + s).innerText;
-        const card = document.getElementById('c-' + s);
-        
-        if(hm === target) {
-            card.classList.add('active-now');
+        // --- 3. LOGIKA ANTREAN RUNNING TEXT ---
+        function jalankanAntrean() {
+            const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
+            const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
             
-            // JIKA WAKTU COCOK DAN BELUM TAMPIL
-            if(audioReady && sudahBunyi !== s) {
-                sudahBunyi = s;
-                
-                // MUNCULKAN POP-UP
-                document.getElementById('modal-azan').style.display = "flex";
-                document.getElementById('azan-name').innerText = s;
-
-                // PUTAR AUDIO (Sesuai setingan file Anda)
-                let userInput = localStorage.getItem('s-' + s);
-                let fileName = (userInput && userInput.trim() !== "") ? userInput.trim() : (s.charAt(0).toUpperCase() + s.slice(1) + ".mp3");
-                
-                // Penyesuaian nama file otomatis
-                if(s === "subuh") fileName = "subuh.mp3";
-                if(s === "dzuhur") fileName = "Azansupri.mp3";
-                if(s === "ashar") fileName = "AdzanMalaysia.mp3";
-                if(s === "maghrib") fileName = "Azansupri.mp3";
-                if(s === "isya") fileName = "Isya.mp3";
-                
-                player.src = baseURL + fileName;
-                player.play();
+            if (daftar.length > 1) {
+                indeksPesan = (indeksPesan + 1) % daftar.length;
+                elMarquee.innerText = daftar[indeksPesan];
+                elMarquee.stop();
+                elMarquee.start();
             }
-        } else {
-            card.classList.remove('active-now');
-            if(sudahBunyi === s && hm !== target) sudahBunyi = "";
         }
-    });
-}
 
-// TAMBAHKAN FUNGSI INI DI BAWAHNYA UNTUK TOMBOL TUTUP
-function tutupModal() {
-    document.getElementById('modal-azan').style.display = "none";
-}
+        // --- 4. STARTUP SYSTEM ---
+        window.onload = function() {
+            // Jalankan Jam & Data
+            muatData(); 
+            updateWaktu(); 
+            setInterval(updateWaktu, 1000);
+
+            // Inisialisasi Teks
+            const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
+            const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
+            
+            if (elMarquee) {
+                if (daftar.length > 0) elMarquee.innerText = daftar[0];
+                // Sinyal ganti teks saat running text habis di layar
+                elMarquee.onfinish = jalankanAntrean;
+            }
+        };
+
+        // --- FUNGSI PENDUKUNG ---
+        function cekAdzan(hm) {
+            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
+                const tEl = document.getElementById('t-' + s);
+                if(!tEl) return;
+                const target = tEl.innerText;
+                const card = document.getElementById('c-' + s);
+                
+                if(hm === target) {
+                    if(card) card.classList.add('active-now');
+                    if(audioReady && sudahBunyi !== s) {
+                        sudahBunyi = s;
+                        document.getElementById('modal-azan').style.display = "flex";
+                        document.getElementById('azan-name').innerText = s;
+
+                        let userInput = localStorage.getItem('s-' + s);
+                        let fileName = (userInput && userInput.trim() !== "") ? userInput.trim() : (s.charAt(0).toUpperCase() + s.slice(1) + ".mp3");
+                        
+                        // Override file audio sesuai instruksi Logistik
+                        if(s === "subuh") fileName = "subuh.mp3";
+                        if(s === "dzuhur") fileName = "Azansupri.mp3";
+                        if(s === "ashar") fileName = "AdzanMalaysia.mp3";
+                        if(s === "maghrib") fileName = "Azansupri.mp3";
+                        if(s === "isya") fileName = "Isya.mp3";
+                        
+                        player.src = baseURL + fileName;
+                        player.play();
+                    }
+                } else {
+                    if(card) card.classList.remove('active-now');
+                    if(sudahBunyi === s && hm !== target) sudahBunyi = "";
+                }
+            });
+        }
+
+        function tutupModal() { document.getElementById('modal-azan').style.display = "none"; }
 
         function aktifkanAudio() {
             if(!audioReady) {
@@ -210,10 +247,14 @@ function tutupModal() {
         }
 
         function muatData() {
-            document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
-            document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "";
-            document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "KOMANDO!";
-            document.getElementById('in-run').value = localStorage.getItem('tJalan') || "";
+            const nSat = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
+            document.getElementById('n-satuan').innerText = nSat;
+            document.getElementById('in-nama').value = nSat;
+            
+            const tJal = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
+            document.getElementById('disp-run').innerText = tJal.split(',')[0];
+            document.getElementById('in-run').value = tJal;
+            
             document.getElementById('in-lat').value = localStorage.getItem('lat') || "";
             document.getElementById('in-lon').value = localStorage.getItem('lon') || "";
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
@@ -236,41 +277,6 @@ function tutupModal() {
             const p = document.getElementById("panel");
             p.style.display = (p.style.display === "block") ? "none" : "block"; 
         }
-
-    // --- KODE STABIL: JAM + RUNNING TEXT ---
-const elMarquee = document.getElementById('disp-run');
-let indeksPesan = 0;
-
-function jalankanAntrean() {
-    const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
-    const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
-    
-    if (daftar.length > 1) {
-        indeksPesan = (indeksPesan + 1) % daftar.length;
-        elMarquee.innerText = daftar[indeksPesan];
-        elMarquee.stop();
-        elMarquee.start();
-    }
-}
-
-window.onload = function() {
-    // 1. Jalankan Jam & Data (WAJIB)
-    if(typeof muatData === "function") muatData(); 
-    if(typeof updateWaktu === "function") {
-        updateWaktu(); 
-        setInterval(updateWaktu, 1000);
-    }
-
-    // 2. Jalankan Running Text
-    const raw = localStorage.getItem('tJalan') || "STAF LOG KORPASGAT, KOMANDO!";
-    const daftar = raw.split(',').map(t => t.trim()).filter(t => t !== "");
-    
-    if (elMarquee) {
-        if (daftar.length > 0) elMarquee.innerText = daftar[0];
-        elMarquee.onfinish = jalankanAntrean;
-        elMarquee.addEventListener('finish', jalankanAntrean);
-    }
-};
     </script>
 </body>
 </html>

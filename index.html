@@ -9,7 +9,7 @@
     
     <style>
        /* 2. BARU SETTING DI DALAM CSS */
- #jam { 
+#jam { 
     font-family: 'Orbitron', sans-serif;
     font-size: 11rem; 
     font-weight: 900;
@@ -18,16 +18,17 @@
     justify-content: center;
     align-items: center;
 
-    /* 1. KITA UBAH TEKSNYA JADI EMAS LANGSUNG */
+    /* WARNA EMAS UTAMA */
     color: #fbbf24 !important; 
 
-    /* 2. KITA TAMBAHKAN LAYER GLOW DAN BAYANGAN HITAM TEBAL */
+    /* EFEK MENYALA EKSTRA TEBAL */
     text-shadow: 
-        0 0 10px #fbbf24,           /* Cahaya emas dekat */
-        0 0 20px #fbbf24,           /* Cahaya emas menengah */
-        0 0 40px #fbbf24,           /* Cahaya emas luas */
-        5px 5px 30px #000,          /* Bayangan hitam agar angka tegas */
-        -5px -5px 30px #000;        /* Bayangan hitam sisi lain */
+        0 0 5px #fff,                /* Inti cahaya putih tipis agar tajam */
+        0 0 15px #fbbf24,            /* Pendaran emas dekat */
+        0 0 30px #fbbf24,            /* Pendaran emas sedang */
+        0 0 50px #fbbf24,            /* Pendaran emas jauh */
+        0 0 70px #fbbf24,            /* Pendaran emas sangat jauh */
+        5px 5px 30px rgba(0,0,0,0.8); /* Bayangan hitam agar angka tidak menyatu dengan background */
 
     margin-bottom: -10px;
     z-index: 2;

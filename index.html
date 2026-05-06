@@ -21,11 +21,17 @@
     /* WARNA EMAS UTAMA */
     color: #ffffff !important; 
 
-      /* SOLUSI AMPUH: KOTAK PELINDUNG DI BELAKANG ANGKA */
-    background: rgba(0, 0, 0, 0.5); /* Kotak hitam transparan */
-    padding: 20px 40px;            /* Ruang di dalam kotak */
-    border-radius: 20px;           /* Sudut kotak dibuat melengkung */
-    backdrop-filter: blur(10px);   /* Membuat background di belakang jam jadi blur (halus) */
+    /* BAYANGAN HITAM SUPER PEKAT */
+    text-shadow: 
+        /* Bayangan tajam di sekeliling angka */
+        2px 2px 0px #000, 
+        -2px -2px 0px #000, 
+        2px -2px 0px #000, 
+        -2px 2px 0px #000,
+        /* Pendaran hitam luas untuk kontras terhadap background */
+        0px 0px 20px rgba(0, 0, 0, 1),
+        0px 0px 40px rgba(0, 0, 0, 1),
+        10px 10px 30px rgba(0, 0, 0, 1);
 
     margin-bottom: -10px;
     z-index: 2;

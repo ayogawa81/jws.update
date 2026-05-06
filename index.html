@@ -23,9 +23,15 @@
 
     /* EFEK MENYALA EKSTRA TEBAL (GLOW) */
     text-shadow: 
-        4px 4px 10px rgba(0, 0, 0, 0.8), 
-        -4px -4px 10px rgba(0, 0, 0, 0.8),
-        0 0 20px rgba(0, 0, 0, 1);
+       /* Bayangan tajam di sekeliling angka */
+        2px 2px 0px #000, 
+        -2px -2px 0px #000, 
+        2px -2px 0px #000, 
+        -2px 2px 0px #000,
+        /* Pendaran hitam luas untuk kontras terhadap background */
+        0px 0px 20px rgba(0, 0, 0, 1),
+        0px 0px 40px rgba(0, 0, 0, 1),
+        10px 10px 30px rgba(0, 0, 0, 1);
 
     margin-bottom: -10px;
     z-index: 2;

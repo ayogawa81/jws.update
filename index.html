@@ -9,24 +9,23 @@
     
     <style>
        /* 2. BARU SETTING DI DALAM CSS */
-    #jam {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 11rem;
-        font-weight: 900;
-        font-variant-numeric: tabular-nums; 
-        display: inline-block;
-        text-align: center;
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-shadow: 5px 5px 20px #000;
-        margin-bottom: -10px;
-        z-index: 2;
-    }
-        #jam span {
+  #jam { 
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11rem; 
+    font-weight: 900;
+    text-align: center;
+    display: flex;             /* Mengatur posisi angka sejajar */
+    justify-content: center;    /* Angka berada di tengah layar */
+    align-items: center;
+    text-shadow: 5px 5px 20px #000;
+    margin-bottom: -10px;
+    z-index: 2;
+    letter-spacing: 2px;
+}
+
+#jam span {
     display: inline-block;
-    width: 1.4ch; /* Mengunci lebar angka agar tetap diam */
+    width: 1.4em;             /* Memberikan ruang yang cukup untuk tiap angka */
     text-align: center;
 }
         :root { --accent: #fbbf24; --active: #ef4444; }

@@ -24,6 +24,11 @@
         margin-bottom: -10px;
         z-index: 2;
     }
+        #jam span {
+    display: inline-block;
+    width: 1.4ch; /* Mengunci lebar angka agar tetap diam */
+    text-align: center;
+}
         :root { --accent: #fbbf24; --active: #ef4444; }
         
         body { 
@@ -164,7 +169,9 @@
             const h = String(now.getHours()).padStart(2, '0');
             const m = String(now.getMinutes()).padStart(2, '0');
             const s = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('jam').innerText = h + ":" + m + ":" + s;
+            document.getElementById('h').innerText = h;
+            document.getElementById('m').innerText = m;
+            document.getElementById('s').innerText = s;
             
             const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
             const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];

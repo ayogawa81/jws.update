@@ -21,14 +21,19 @@
     /* WARNA EMAS UTAMA */
     color: #ffffff !important; 
 
-/* EFEK NEON EMAS BERLAPIS */
+/* TEKNIK ANTI-ANEH: GARIS TEPI HITAM TEBAL & BAYANGAN PEKAT */
     text-shadow: 
-        0 0 10px #fff,                /* Inti cahaya putih */
-        0 0 20px #fbbf24,             /* Glow emas tipis */
-        0 0 40px #fbbf24,             /* Glow emas sedang */
-        0 0 80px #fbbf24,             /* Glow emas luas */
-        0 0 120px #fbbf24,            /* Pendaran luar */
-        5px 5px 15px rgba(0,0,0,0.8); /* Bayangan hitam agar angka tetap tegas */
+        /* Membuat garis tepi hitam 3px di semua sisi angka */
+        -3px -3px 0 #000,  
+         3px -3px 0 #000,
+        -3px  3px 0 #000,
+         3px  3px 0 #000,
+         0px  3px 0 #000,
+         0px -3px 0 #000,
+         3px  0px 0 #000,
+        -3px  0px 0 #000,
+        /* Bayangan dasar agar angka lebih "keluar" dari gambar */
+        10px 10px 20px rgba(0,0,0,0.9);
 
     margin-bottom: -10px;
     z-index: 2;

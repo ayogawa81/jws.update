@@ -17,6 +17,15 @@
     display: flex;             /* Mengatur posisi angka sejajar */
     justify-content: center;    /* Angka berada di tengah layar */
     align-items: center;
+    color: #fff; /* Membuat angka putih agar pendaran warna di pinggir lebih kontras */
+    
+    /* KODE UNTUK MENYALA (GLOW EFFECT) */
+    text-shadow: 
+        0 0 10px #fff,           /* Cahaya putih di dekat angka */
+        0 0 20px var(--accent),  /* Pendaran warna aksen (emas) */
+        0 0 40px var(--accent),  /* Pendaran warna aksen lebih luas */
+        0 0 60px var(--accent),  /* Pendaran warna aksen paling luar */
+        5px 5px 20px #000;       /* Bayangan hitam dasar agar tetap tegas */
     text-shadow: 5px 5px 20px #000;
     margin-bottom: -10px;
     z-index: 2;

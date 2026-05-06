@@ -10,28 +10,20 @@
     <style>
        /* 2. BARU SETTING DI DALAM CSS */
 #jam { 
-    font-family: 'Orbitron', sans-serif;
-    font-size: 15rem; 
-    font-weight: 900;
+    /* Import font ini di bagian atas HTML Anda: 
+       <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet"> */
+    font-family: 'Michroma', sans-serif;
+    font-size: 10rem; 
+    font-weight: bold;
     text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    /* WARNA EMAS UTAMA */
-    color: #ffffff !important; 
-
-/* BAYANGAN HIJAU NEON (GLOW) */
-    text-shadow: 
-        0 0 5px #fff,                /* Inti putih */
-        0 0 10px #39ff14,            /* Glow hijau dekat */
-        0 0 20px #39ff14,            /* Glow hijau sedang */
-        0 0 40px #39ff14,            /* Glow hijau kuat */
-        5px 5px 20px rgba(0,0,0,0.7); /* Tetap ada sedikit bayangan hitam agar tidak pudar di langit terang */
+    color: #39ff14 !important; /* Hijau Neon */
+    
+    /* Efek menyala yang stabil */
+    filter: drop-shadow(0 0 8px #39ff14) drop-shadow(0 0 20px #15803d);
+    text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
 
     margin-bottom: -10px;
     z-index: 2;
-    letter-spacing: 5px;
 }
 
 #jam span {

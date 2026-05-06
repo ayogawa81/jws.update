@@ -11,7 +11,7 @@
        /* 2. BARU SETTING DI DALAM CSS */
   #jam { 
     font-family: 'Orbitron', sans-serif;
-    font-size: 11rem; 
+    font-size: 12rem; 
     font-weight: 900;
     text-align: center;
     display: flex;             /* Mengatur posisi angka sejajar */
@@ -19,13 +19,11 @@
     align-items: center;
     color: #fff; /* Warna dasar putih agar cahaya di pinggirnya kontras */
     text-shadow: 
-        0 0 7px #fff,                  /* Cahaya inti */
-        0 0 10px #fff,                 /* Cahaya inti tambahan */
-        0 0 21px var(--accent),        /* Pendaran warna emas utama */
-        0 0 42px var(--accent),        /* Pendaran warna emas luas */
-        0 0 82px var(--accent),        /* Pendaran terjauh */
-        0 0 92px var(--accent),        /* Pendaran paling luar */
-        5px 5px 20px #000;             /* Bayangan hitam agar angka tetap tegas */
+        0 0 10px #fff, 
+        0 0 20px #fbbf24, 
+        0 0 30px #fbbf24, 
+        0 0 40px #fbbf24,
+        5px 5px 20px #000;  /* Bayangan hitam agar angka tetap tegas */
     margin-bottom: -10px;
     z-index: 2;
     letter-spacing: 2px;
@@ -35,6 +33,7 @@
     display: inline-block;
     width: 1.8em;             /* Memberikan ruang yang cukup untuk tiap angka */
     text-align: center;
+    color: white; /* Memastikan angka di dalam span juga putih */
 }
         :root { --accent: #fbbf24; --active: #ef4444; }
         

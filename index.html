@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V32 - OFFICIAL</title>
+    <title>JWS KORPASGAT V32 - RESTORED OLD VERSION</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Michroma&display=swap" rel="stylesheet">
     
     <style>
@@ -24,14 +24,14 @@
 
         #container-utama { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; }
         
-        /* JAM HIJAU NEON SESUAI GAMBAR */
+        /* RESTORED: JAM HIJAU NEON ASLI */
         #jam { 
             font-family: 'Michroma', sans-serif; font-size: 11rem; font-weight: bold;
             color: #39ff14 !important; filter: drop-shadow(0 0 8px #39ff14);
             text-shadow: 0 0 10px rgba(57, 255, 20, 0.5); margin: 0;
         }
 
-        /* BOX COUNTDOWN */
+        /* AUTO COUNTDOWN BOX (Hanya muncul saat dibutuhkan) */
         #countdown-box {
             font-size: 2.8rem; color: #ffffff; padding: 10px 50px; border-radius: 15px;
             border: 3px solid #fff; margin-top: -10px; display: none; font-weight: bold; text-align: center;
@@ -41,6 +41,7 @@
 
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
+        /* RESTORED: JADWAL SALAT LAYOUT */
         .prayer-row { display: flex; background: rgba(0,0,0,0.9); border-top: 4px solid var(--accent); z-index: 2; }
         .card { flex: 1; padding: 20px 10px; text-align: center; border-right: 1px solid #333; }
         .card h3 { margin: 0; font-size: 1.3rem; color: var(--accent); text-transform: uppercase; }
@@ -49,7 +50,7 @@
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); z-index: 2; }
         
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: #f4f4f4; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; }
-        input { width: 92%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
+        input { width: 92%; padding: 12px; margin: 8px 0; }
         .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
@@ -105,6 +106,7 @@
         const player = document.getElementById('mainPlayer');
         const baseURL = "https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/";
 
+        // LISTENER: OTOMATIS IQOMAH SAAT AUDIO SELESAI
         player.onended = function() {
             document.getElementById('modal-azan').style.display = "none";
             startIqomah();

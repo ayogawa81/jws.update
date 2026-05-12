@@ -3,207 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V32 - RESTORED</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Michroma&display=swap" rel="stylesheet">
+    <title>JWS KORPASGAT V32 FINAL FIX - SLIDESHOW</title>
+    <!-- 1. PASANG LINK GOOGLE FONT DI SINI (Sebelum Style) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
     
     <style>
+       /* 2. BARU SETTING DI DALAM CSS */
+#jam { 
+    /* Import font ini di bagian atas HTML Anda: 
+       <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet"> */
+    font-family: 'Michroma', sans-serif;
+    font-size: 10rem; 
+    font-weight: bold;
+    text-align: center;
+    color: #39ff14 !important; /* Hijau Neon */
+    
+    /* Efek menyala yang stabil */
+    filter: drop-shadow(0 0 8px #39ff14) drop-shadow(0 0 20px #15803d);
+    text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+
+    margin-bottom: -10px;
+    z-index: 2;
+}
+
+#jam span {
+    display: inline-block;
+    width: 2ch;
+    text-align: center;
+    /* Memastikan angka dalam span ikut jadi emas */
+    color: #ffffff; 
+}
+
+/* Memastikan titik dua juga ikut menyala emas */
+#jam {
+    color: #fbbf24; /* Memberikan warna dasar emas pada pemisah titik dua */
+}
         :root { --accent: #fbbf24; --active: #ef4444; }
         
         body { 
-            margin: 0; background: #000; color: white; font-family: 'Arial Black', sans-serif; 
+            margin: 0; background: #000;
+            color: white; font-family: 'Arial Black', sans-serif; 
             height: 100vh; overflow: hidden; display: flex; flex-direction: column; cursor: pointer;
         }
 
-        #bg-slideshow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        .slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 2s; }
-        .slide.active { opacity: 1; }
-        .overlay { position: absolute; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1; }
+        /* CONTAINER SLIDESHOW */
+        #bg-slideshow {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        }
 
-        /* HEADER EMAS SESUAI GAMBAR */
+        .slide {
+            position: absolute; width: 100%; height: 100%;
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            opacity: 0; transition: opacity 2s ease-in-out;
+        }
+
+        .slide.active { opacity: 1; }
+
+        /* LAPISAN GELAP (Agar teks terbaca) */
+        .overlay {
+            position: absolute; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); /* Tingkatkan ke 0.6 jika gambar terlalu terang */
+            z-index: 1;
+        }
+
+        /* CONTENT STYLES */
         .header { padding: 10px; text-align: center; background: rgba(0,0,0,0.8); border-bottom: 4px solid var(--accent); z-index: 2; }
         #n-satuan { font-size: 3.5rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
-
-        #container-utama { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; }
-        
-        /* JAM HIJAU NEON SESUAI GAMBAR */
-        #jam { 
-            font-family: 'Michroma', sans-serif; font-size: 11rem; font-weight: bold;
-            color: #39ff14 !important; filter: drop-shadow(0 0 8px #39ff14);
-            text-shadow: 0 0 10px rgba(57, 255, 20, 0.5); margin: 0;
-        }
-
-        /* BOX COUNTDOWN (Hanya muncul otomatis) */
-        #countdown-box {
-            font-size: 2.8rem; color: #ffffff; padding: 10px 50px; border-radius: 15px;
-            border: 3px solid #fff; margin-top: -10px; display: none; font-weight: bold; text-align: center;
-        }
-        .bg-azan { background: rgba(239, 68, 68, 0.85); animation: pulse 1s infinite; }
-        .bg-iqomah { background: rgba(30, 58, 138, 0.85); border-color: #39ff14 !important; }
-
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
-
-        /* JADWAL SALAT LAYOUT LAMA */
+        #jam { font-size: 11rem; font-weight: 900; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; text-shadow: 5px 5px 20px #000; margin-bottom: -10px; z-index: 2; }
+        #tgl-container { text-align: center; margin-bottom: 20px; z-index: 2; }
+        #tgl-masehi { font-size: 2.2rem; font-weight: bold; background: rgba(0,0,0,0.6); padding: 5px 30px; border-radius: 50px; border: 2px solid var(--accent); display: inline-block; margin-right: 10px; }
+        #tgl-hijriah { font-size: 2.2rem; font-weight: bold; color: var(--accent); background: rgba(0,0,0,0.8); padding: 5px 30px; border-radius: 50px; border: 2px solid white; display: inline-block; }
         .prayer-row { display: flex; background: rgba(0,0,0,0.9); border-top: 4px solid var(--accent); z-index: 2; }
         .card { flex: 1; padding: 20px 10px; text-align: center; border-right: 1px solid #333; }
-        .card h3 { margin: 0; font-size: 1.3rem; color: var(--accent); text-transform: uppercase; }
+        .active-now { background: var(--active) !important; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.7; } }
+        .card h3 { margin: 0; font-size: 1.3rem; color: var(--accent); }
         .card p { margin: 5px 0 0; font-size: 3.5rem; font-weight: 900; }
-
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); z-index: 2; }
         
         /* PANEL PENGATURAN */
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: #f4f4f4; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; }
-        input { width: 92%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
-        .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; border-radius: 8px; cursor: pointer; }
+        input { width: 92%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 20px; margin-top: 10px; }
+        #audio-status { position: fixed; top: 8%; right: 80px; font-size: 14px; font-weight: bold; color: #0f0; display: none; background: rgba(0,0,0,0.9); padding: 5px 15px; border-radius: 10px; border: 1px solid #0f0; z-index: 9999; box-shadow: 0 0 15px rgba(0,255,0,0.5); }
     </style>
 </head>
 <body onclick="aktifkanAudio()">
     
-    <div id="modal-azan" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10000; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-        <h1 style="font-size:6rem; color:#fbbf24; margin:0;">ADZAN BERKUMANDANG</h1>
-        <h2 id="azan-name" style="font-size:10rem; color:#fff; margin:0; text-transform:uppercase;">...</h2>
-    </div>
-
+<!-- KOTAK POP-UP AZAN -->
+<div id="modal-azan" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+    <h1 id="azan-title" style="font-size:6rem; color:#fbbf24; text-shadow: 0 0 20px #fbbf24; margin:0;">MEMASUKI WAKTU</h1>
+    <h2 id="azan-name" style="font-size:10rem; color:#fff; margin:0; text-transform:uppercase;">MAGHRIB</h2>
+    <button onclick="tutupModal()" style="margin-top:30px; padding:15px 40px; font-size:2rem; font-weight:bold; background:#ef4444; color:white; border:none; border-radius:10px; cursor:pointer;">TUTUP</button>
+</div>
+    <!-- BACKGROUND SLIDESHOW -->
     <div id="bg-slideshow">
         <div class="overlay"></div>
+        <!-- Kode ini akan otomatis memanggil file foto yang kamu upload tadi -->
         <div class="slide active" style="background-image: url('bg1.jpg')"></div>
         <div class="slide" style="background-image: url('bg2.jpg')"></div>
         <div class="slide" style="background-image: url('bg3.jpg')"></div>
+        <div class="slide" style="background-image: url('bg4.jpg')"></div>
+        <div class="slide" style="background-image: url('bg5.jpg')"></div>
+        <div class="slide" style="background-image: url('bg6.jpg')"></div>
     </div>
     
     <audio id="mainPlayer" preload="auto"></audio>
+    <div id="audio-status">● AUDIO SIAP (KOMANDO)</div>
 
-    <div style="position:fixed; top:20px; right:20px; font-size:35px; z-index:100;" onclick="togglePanel()">⚙️</div>
-    
+    <div style="position:fixed; top:20px; right:20px; font-size:35px; z-index:100; background:rgba(0,0,0,0.5); border-radius:50%; padding:5px;" onclick="togglePanel()">⚙️</div>
     <div class="header"><h1 id="n-satuan">STAFLOG KORPASGAT</h1></div>
 
-    <div id="container-utama">
-        <div id="jam">00:00:00</div>
-        <div id="countdown-box">...</div>
+    <div id="jam">
+    <span id="h">00</span>:<span id="m">00</span>:<span id="s">00</span>
+</div>
+    
+    <div id="tgl-container">
+        <div id="tgl-masehi">...</div>
+        <div id="tgl-hijriah">...</div>
     </div>
 
     <div class="prayer-row">
-        <div class="card"><h3>SUBUH</h3><p id="t-subuh">04:31</p></div>
-        <div class="card"><h3>DZUHUR</h3><p id="t-dzuhur">11:47</p></div>
-        <div class="card"><h3>ASHAR</h3><p id="t-ashar">15:08</p></div>
-        <div class="card"><h3>MAGHRIB</h3><p id="t-maghrib">17:43</p></div>
-        <div class="card"><h3>ISYA</h3><p id="t-isya">18:54</p></div>
+        <div class="card" id="c-subuh"><h3>SUBUH</h3><p id="t-subuh">04:31</p></div>
+        <div class="card" id="c-dzuhur"><h3>DZUHUR</h3><p id="t-dzuhur">11:47</p></div>
+        <div class="card" id="c-ashar"><h3>ASHAR</h3><p id="t-ashar">15:08</p></div>
+        <div class="card" id="c-maghrib"><h3>MAGHRIB</h3><p id="t-maghrib">17:43</p></div>
+        <div class="card" id="c-isya"><h3>ISYA</h3><p id="t-isya">18:54</p></div>
     </div>
 
-    <marquee id="disp-run">Salatlah tepat pada waktunya...</marquee>
+    <marquee id="disp-run">Apa yang menjadi takdirmu tidak akan pernah melewatkanmu, dan apa yang melewatkanmu tidak akan pernah menjadi takdirmu (Umar bin Khattab), Salatlah seperti salat terakhirmu." (HR. Ibnu Majah)</marquee>
 
     <div id="panel">
-        <h2 style="text-align:center;">⚙️ SETTING JWS</h2>
-        Nama Satuan: <input type="text" id="in-nama">
-        Jeda Iqomah (Menit): <input type="number" id="in-iqo">
-        Running Text: <input type="text" id="in-run">
+        <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
+        <b>Nama Satuan:</b>
+        <input type="text" id="in-nama">
+        <b>Running Text:</b>
+        <input type="text" id="in-run">
+        <b>Koordinat (Latitude, Longitude):</b>
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="in-lat" placeholder="Lat: -6.9175">
+            <input type="text" id="in-lon" placeholder="Lon: 107.6191">
+        </div>
+        <hr>
+        <b>Nama File Audio (Cukup Nama MP3 Saja):</b>
+        <input type="text" id="in-subuh" placeholder="Contoh: subuh.mp3">
+        <input type="text" id="in-dzuhur" placeholder="Contoh: dzuhur.mp3">
+        <input type="text" id="in-ashar" placeholder="Contoh: Ashar.mp3">
+        <input type="text" id="in-maghrib" placeholder="Contoh: Magrib.mp3">
+        <input type="text" id="in-isya" placeholder="Contoh: Isya.mp3">
         <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
-        <p onclick="togglePanel()" style="text-align:center; cursor:pointer;">[ TUTUP ]</p>
+        <p onclick="togglePanel()" style="text-align:center; color:gray; cursor:pointer; margin-top:20px;">[ TUTUP ]</p>
     </div>
 
     <script>
+        // LOGIKA SLIDESHOW
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        setInterval(nextSlide, 10000); // Ganti gambar setiap 10 detik
+
+        // LOGIKA JWS (Sesuai kode awal kamu)
+        const player = document.getElementById('mainPlayer');
         let audioReady = false;
         let sudahBunyi = "";
-        let isIqomah = false;
-        let iqomahTime = 0;
-        const player = document.getElementById('mainPlayer');
         const baseURL = "https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/";
-
-        player.onended = function() {
-            document.getElementById('modal-azan').style.display = "none";
-            startIqomah();
-        };
 
         function updateWaktu() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
             const m = String(now.getMinutes()).padStart(2, '0');
             const s = String(now.getSeconds()).padStart(2, '0');
-            const hm = h + ":" + m;
-            document.getElementById('jam').innerText = `${h}:${m}:${s}`;
+            document.getElementById('h').innerText = h;
+            document.getElementById('m').innerText = m;
+            document.getElementById('s').innerText = s;
             
-            if (isIqomah) { prosesIqomah(); } 
-            else { cekJadwal(now, hm); }
+            const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            document.getElementById('tgl-masehi').innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
+
+            try {
+                const optH = { day: 'numeric', month: 'long', year: 'numeric' };
+                const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
+                document.getElementById('tgl-hijriah').innerText = hijri + " ";
+            } catch(e) { document.getElementById('tgl-hijriah').innerText = "Update Kalender..."; }
+            cekAdzan(h + ":" + m);
         }
 
-        function cekJadwal(now, hm) {
-            const jadwal = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
-            let cdBox = document.getElementById('countdown-box');
-            let found = false;
+       function cekAdzan(hm) {
+            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
+                const target = document.getElementById('t-' + s).innerText;
+                const card = document.getElementById('c-' + s);
+                
+                if(hm === target) {
+                    card.classList.add('active-now');
+                    
+                    // JIKA WAKTU COCOK DAN BELUM BUNYI
+                    if(audioReady && sudahBunyi !== s) {
+                        sudahBunyi = s;
+                        
+                        // TAMPILKAN KOTAK POP-UP
+                        const modal = document.getElementById('modal-azan');
+                        document.getElementById('azan-name').innerText = s;
+                        modal.style.display = "flex";
 
-            jadwal.forEach(waktu => {
-                const targetStr = document.getElementById('t-' + waktu).innerText;
-                const [tH, tM] = targetStr.split(':').map(Number);
-                const tDate = new Date(); tDate.setHours(tH, tM, 0);
-                const diff = (tDate - now) / 1000;
-
-                if (hm === targetStr && sudahBunyi !== waktu) {
-                    mulaiAzan(waktu);
-                } else if (diff > 0 && diff <= 600) {
-                    const mS = Math.floor(diff/60); const sS = Math.floor(diff%60);
-                    cdBox.style.display = "block"; cdBox.className = "bg-azan";
-                    cdBox.innerText = `MENUJU ${waktu.toUpperCase()}: ${String(mS).padStart(2,'0')}:${String(sS).padStart(2,'0')}`;
-                    found = true;
+                        // PUTAR AUDIO
+                        let userInput = localStorage.getItem('s-' + s);
+                        let fileName = (userInput && userInput.trim() !== "") ? userInput.trim() : (s.charAt(0).toUpperCase() + s.slice(1) + ".mp3");
+                        
+                        // Override manual sesuai settingan file Anda
+                        if(s === "subuh") fileName = "subuh.mp3";
+                        if(s === "dzuhur") fileName = "Azansupri.mp3";
+                        if(s === "ashar") fileName = "AdzanMalaysia.mp3";
+                        if(s === "maghrib") fileName = "Azansupri.mp3";
+                        if(s === "isya") fileName = "Isya.mp3";
+                        
+                        player.src = baseURL + fileName;
+                        player.play();
+                    }
+                } else {
+                    card.classList.remove('active-now');
+                    if(sudahBunyi === s && hm !== target) sudahBunyi = "";
                 }
             });
-            if (!found && !isIqomah) cdBox.style.display = "none";
         }
 
-        function mulaiAzan(w) {
-            sudahBunyi = w;
-            document.getElementById('azan-name').innerText = w;
-            document.getElementById('modal-azan').style.display = "flex";
-            if(audioReady) {
-                let f = (w === "subuh") ? "subuh.mp3" : (w === "dzuhur" || w === "maghrib") ? "Azansupri.mp3" : (w === "ashar") ? "AdzanMalaysia.mp3" : "Isya.mp3";
-                player.src = baseURL + f;
-                player.play().catch(() => { setTimeout(tutupAuto, 5000); });
-            } else { setTimeout(tutupAuto, 10000); }
+        // FUNGSI UNTUK MENUTUP KOTAK SECARA MANUAL
+        function tutupModal() {
+            document.getElementById('modal-azan').style.display = "none";
         }
-
-        function tutupAuto() { document.getElementById('modal-azan').style.display = "none"; startIqomah(); }
-
-        function startIqomah() {
-            isIqomah = true;
-            iqomahTime = (parseInt(localStorage.getItem('jedaIqo')) || 10) * 60;
-            document.getElementById('countdown-box').style.display = "block";
-            document.getElementById('countdown-box').className = "bg-iqomah";
-        }
-
-        function prosesIqomah() {
-            if (iqomahTime > 0) {
-                iqomahTime--;
-                const mI = Math.floor(iqomahTime/60); const sI = iqomahTime%60;
-                document.getElementById('countdown-box').innerText = `IQOMAH: ${String(mI).padStart(2,'0')}:${String(sI).padStart(2,'0')}`;
-            } else {
-                document.getElementById('countdown-box').innerText = "WAKTUNYA SALAT";
-                setTimeout(() => { isIqomah = false; sudahBunyi = ""; document.getElementById('countdown-box').style.display = "none"; }, 15000);
+        function aktifkanAudio() {
+            if(!audioReady) {
+                audioReady = true;
+                player.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
+                player.play();
+                document.getElementById('audio-status').style.display = "block";
             }
         }
 
         function muatData() {
             document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
             document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "";
-            document.getElementById('in-iqo').value = localStorage.getItem('jedaIqo') || "10";
-            document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "Salatlah tepat pada waktunya...";
+            document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "Apa yang menjadi takdirmu tidak akan pernah melewatkanmu, dan apa yang melewatkanmu tidak akan pernah menjadi takdirmu (Umar bin Khattab)";
             document.getElementById('in-run').value = localStorage.getItem('tJalan') || "";
+            document.getElementById('in-lat').value = localStorage.getItem('lat') || "";
+            document.getElementById('in-lon').value = localStorage.getItem('lon') || "";
+            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
+                document.getElementById('in-' + s).value = localStorage.getItem('s-' + s) || "";
+            });
         }
 
         function saveData() {
             localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
-            localStorage.setItem('jedaIqo', document.getElementById('in-iqo').value);
             localStorage.setItem('tJalan', document.getElementById('in-run').value);
+            localStorage.setItem('lat', document.getElementById('in-lat').value);
+            localStorage.setItem('lon', document.getElementById('in-lon').value);
+            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
+                localStorage.setItem('s-' + s, document.getElementById('in-' + s).value);
+            });
             location.reload();
         }
 
-        function togglePanel() { const p = document.getElementById("panel"); p.style.display = (p.style.display === "block") ? "none" : "block"; }
-        function aktifkanAudio() { audioReady = true; player.play().catch(()=>{}); }
-        
-        setInterval(() => {
-            const slides = document.querySelectorAll('.slide');
-            let cur = 0;
-            slides.forEach((s, i) => { if(s.classList.contains('active')) cur = i; });
-            slides[cur].classList.remove('active');
-            slides[(cur + 1) % slides.length].classList.add('active');
-        }, 10000);
+        function togglePanel() { 
+            const p = document.getElementById("panel");
+            p.style.display = (p.style.display === "block") ? "none" : "block"; 
+        }
 
         window.onload = () => { muatData(); updateWaktu(); setInterval(updateWaktu, 1000); };
     </script>

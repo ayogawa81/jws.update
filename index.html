@@ -157,10 +157,7 @@
     </div>
 
     <script>
-       // Tambahkan variabel kontrol di bagian atas script
-        let isIqomah = false;
-        let iqomahTime = 0;
-        // LOGIKA SLIDESHOW
+             // LOGIKA SLIDESHOW
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
 
@@ -198,38 +195,32 @@
             cekAdzan(h + ":" + m);
         }
 
-       // Listener: Otomatis Iqomah saat audio selesai
+      // Fungsi ini akan dipanggil otomatis SAAT AUDIO ADZAN SELESAI
 player.onended = function() {
     document.getElementById('modal-azan').style.display = "none";
     isIqomah = true;
-    iqomahTime = (parseInt(localStorage.getItem('jedaIqo')) || 10) * 60; // Ambil dari setting
+    // Mengambil jeda dari setting atau default 10 menit
+    let jedaMenit = parseInt(localStorage.getItem('jedaIqo')) || 10;
+    iqomahTime = jedaMenit * 60;
     document.getElementById('countdown-box').style.display = "block";
 };
-
-function updateWaktu() {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    const s = String(now.getSeconds()).padStart(2, '0');
-    const hm = h + ":" + m;
-    document.getElementById('h').innerText = h;
-    document.getElementById('m').innerText = m;
-    document.getElementById('s').innerText = s;
-
-    if (isIqomah) {
-        // Logika Hitung Mundur Iqomah
-        if (iqomahTime > 0) {
-            iqomahTime--;
-            const mI = Math.floor(iqomahTime / 60); const sI = iqomahTime % 60;
-            document.getElementById('countdown-box').innerText = `IQOMAH: ${String(mI).padStart(2,'0')}:${String(sI).padStart(2,'0')}`;
-        } else {
-            document.getElementById('countdown-box').innerText = "WAKTUNYA SALAT";
-            setTimeout(() => { isIqomah = false; sudahBunyi = ""; document.getElementById('countdown-box').style.display = "none"; }, 15000);
-        }
+        function prosesIqomah() {
+    if (iqomahTime > 0) {
+        iqomahTime--;
+        const mI = Math.floor(iqomahTime / 60);
+        const sI = iqomahTime % 60;
+        document.getElementById('countdown-box').innerText = `IQOMAH: ${String(mI).padStart(2,'0')}:${String(sI).padStart(2,'0')}`;
     } else {
-        cekJadwalBaru(now, hm);
+        document.getElementById('countdown-box').innerText = "WAKTUNYA SALAT";
+        // Tutup otomatis setelah 20 detik
+        setTimeout(() => {
+            isIqomah = false;
+            sudahBunyi = ""; 
+            document.getElementById('countdown-box').style.display = "none";
+        }, 20000);
     }
 }
+ 
 
 function cekJadwalBaru(now, hm) {
     const jadwal = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];

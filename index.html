@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V32 - FIX BLACK SCREEN</title>
+    <title>JWS KORPASGAT V32 - OFFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Michroma&display=swap" rel="stylesheet">
     
     <style>
@@ -14,25 +14,24 @@
             height: 100vh; overflow: hidden; display: flex; flex-direction: column; cursor: pointer;
         }
 
-        /* PERBAIKAN SLIDESHOW: Pastikan background tidak hitam */
-        #bg-slideshow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #111; }
-        .slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 2s ease-in-out; }
+        #bg-slideshow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 2s; }
         .slide.active { opacity: 1; }
         .overlay { position: absolute; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1; }
 
-        /* HEADER EMAS KORPASGAT */
         .header { padding: 10px; text-align: center; background: rgba(0,0,0,0.8); border-bottom: 4px solid var(--accent); z-index: 2; }
         #n-satuan { font-size: 3.5rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
 
-        /* JAM HIJAU NEON ASLI */
         #container-utama { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; }
+        
+        /* JAM HIJAU NEON SESUAI GAMBAR */
         #jam { 
             font-family: 'Michroma', sans-serif; font-size: 11rem; font-weight: bold;
             color: #39ff14 !important; filter: drop-shadow(0 0 8px #39ff14);
             text-shadow: 0 0 10px rgba(57, 255, 20, 0.5); margin: 0;
         }
 
-        /* BOX COUNTDOWN OTOMATIS */
+        /* BOX COUNTDOWN */
         #countdown-box {
             font-size: 2.8rem; color: #ffffff; padding: 10px 50px; border-radius: 15px;
             border: 3px solid #fff; margin-top: -10px; display: none; font-weight: bold; text-align: center;
@@ -42,7 +41,6 @@
 
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
-        /* TATA LETAK JADWAL ASLI */
         .prayer-row { display: flex; background: rgba(0,0,0,0.9); border-top: 4px solid var(--accent); z-index: 2; }
         .card { flex: 1; padding: 20px 10px; text-align: center; border-right: 1px solid #333; }
         .card h3 { margin: 0; font-size: 1.3rem; color: var(--accent); text-transform: uppercase; }
@@ -51,8 +49,8 @@
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); z-index: 2; }
         
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: #f4f4f4; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; }
-        input { width: 92%; padding: 12px; margin: 8px 0; }
-        .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; }
+        input { width: 92%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
+        .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body onclick="aktifkanAudio()">
@@ -88,7 +86,7 @@
         <div class="card"><h3>ISYA</h3><p id="t-isya">18:54</p></div>
     </div>
 
-    <marquee id="disp-run">Tepat pada waktunya...</marquee>
+    <marquee id="disp-run">Salatlah tepat pada waktunya...</marquee>
 
     <div id="panel">
         <h2 style="text-align:center;">⚙️ SETTING JWS</h2>
@@ -107,7 +105,6 @@
         const player = document.getElementById('mainPlayer');
         const baseURL = "https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/";
 
-        // OTOMATIS IQOMAH SETELAH AZAN SELESAI
         player.onended = function() {
             document.getElementById('modal-azan').style.display = "none";
             startIqomah();
@@ -183,7 +180,7 @@
             document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
             document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "";
             document.getElementById('in-iqo').value = localStorage.getItem('jedaIqo') || "10";
-            document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "Tepat pada waktunya...";
+            document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "Salatlah tepat pada waktunya...";
             document.getElementById('in-run').value = localStorage.getItem('tJalan') || "";
         }
 
@@ -195,4 +192,17 @@
         }
 
         function togglePanel() { const p = document.getElementById("panel"); p.style.display = (p.style.display === "block") ? "none" : "block"; }
-        function aktifkanAudio()
+        function aktifkanAudio() { audioReady = true; player.play().catch(()=>{}); }
+        
+        setInterval(() => {
+            const slides = document.querySelectorAll('.slide');
+            let cur = 0;
+            slides.forEach((s, i) => { if(s.classList.contains('active')) cur = i; });
+            slides[cur].classList.remove('active');
+            slides[(cur + 1) % slides.length].classList.add('active');
+        }, 10000);
+
+        window.onload = () => { muatData(); updateWaktu(); setInterval(updateWaktu, 1000); };
+    </script>
+</body>
+</html>

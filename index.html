@@ -116,6 +116,7 @@
 
     <div id="jam">
     <span id="h">00</span>:<span id="m">00</span>:<span id="s">00</span>
+    <div id="countdown-box" style="font-size: 2.8rem; color: #ffffff; padding: 10px 50px; border-radius: 15px; border: 3px solid #fff; margin-top: -10px; display: none; font-weight: bold; text-align: center; z-index: 2;">...</div>
 </div>
     
     <div id="tgl-container">
@@ -156,6 +157,9 @@
     </div>
 
     <script>
+       // Tambahkan variabel kontrol di bagian atas script
+        let isIqomah = false;
+        let iqomahTime = 0;
         // LOGIKA SLIDESHOW
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
@@ -194,44 +198,66 @@
             cekAdzan(h + ":" + m);
         }
 
-       function cekAdzan(hm) {
-            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
-                const target = document.getElementById('t-' + s).innerText;
-                const card = document.getElementById('c-' + s);
-                
-                if(hm === target) {
-                    card.classList.add('active-now');
-                    
-                    // JIKA WAKTU COCOK DAN BELUM BUNYI
-                    if(audioReady && sudahBunyi !== s) {
-                        sudahBunyi = s;
-                        
-                        // TAMPILKAN KOTAK POP-UP
-                        const modal = document.getElementById('modal-azan');
-                        document.getElementById('azan-name').innerText = s;
-                        modal.style.display = "flex";
+       // Listener: Otomatis Iqomah saat audio selesai
+player.onended = function() {
+    document.getElementById('modal-azan').style.display = "none";
+    isIqomah = true;
+    iqomahTime = (parseInt(localStorage.getItem('jedaIqo')) || 10) * 60; // Ambil dari setting
+    document.getElementById('countdown-box').style.display = "block";
+};
 
-                        // PUTAR AUDIO
-                        let userInput = localStorage.getItem('s-' + s);
-                        let fileName = (userInput && userInput.trim() !== "") ? userInput.trim() : (s.charAt(0).toUpperCase() + s.slice(1) + ".mp3");
-                        
-                        // Override manual sesuai settingan file Anda
-                        if(s === "subuh") fileName = "subuh.mp3";
-                        if(s === "dzuhur") fileName = "Azansupri.mp3";
-                        if(s === "ashar") fileName = "AdzanMalaysia.mp3";
-                        if(s === "maghrib") fileName = "Azansupri.mp3";
-                        if(s === "isya") fileName = "Isya.mp3";
-                        
-                        player.src = baseURL + fileName;
-                        player.play();
-                    }
-                } else {
-                    card.classList.remove('active-now');
-                    if(sudahBunyi === s && hm !== target) sudahBunyi = "";
-                }
-            });
+function updateWaktu() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+    const hm = h + ":" + m;
+    document.getElementById('h').innerText = h;
+    document.getElementById('m').innerText = m;
+    document.getElementById('s').innerText = s;
+
+    if (isIqomah) {
+        // Logika Hitung Mundur Iqomah
+        if (iqomahTime > 0) {
+            iqomahTime--;
+            const mI = Math.floor(iqomahTime / 60); const sI = iqomahTime % 60;
+            document.getElementById('countdown-box').innerText = `IQOMAH: ${String(mI).padStart(2,'0')}:${String(sI).padStart(2,'0')}`;
+        } else {
+            document.getElementById('countdown-box').innerText = "WAKTUNYA SALAT";
+            setTimeout(() => { isIqomah = false; sudahBunyi = ""; document.getElementById('countdown-box').style.display = "none"; }, 15000);
         }
+    } else {
+        cekJadwalBaru(now, hm);
+    }
+}
 
+function cekJadwalBaru(now, hm) {
+    const jadwal = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
+    let cdBox = document.getElementById('countdown-box');
+    let foundCD = false;
+
+    jadwal.forEach(waktu => {
+        const targetStr = document.getElementById('t-' + waktu).innerText;
+        const [tH, tM] = targetStr.split(':').map(Number);
+        const targetDate = new Date(); targetDate.setHours(tH, tM, 0);
+        const selisih = (targetDate - now) / 1000;
+
+        if (hm === targetStr && sudahBunyi !== waktu) {
+            // Jalankan Azan (Logika lama Anda)
+            sudahBunyi = waktu;
+            document.getElementById('azan-name').innerText = waktu;
+            document.getElementById('modal-azan').style.display = "flex";
+            player.play(); 
+        } else if (selisih > 0 && selisih <= 600) { // Muncul 10 menit sebelum azan
+            const mS = Math.floor(selisih / 60); const sS = Math.floor(selisih % 60);
+            cdBox.style.display = "block";
+            cdBox.style.backgroundColor = "rgba(239, 68, 68, 0.8)"; // Merah Azan
+            cdBox.innerText = `MENUJU ${waktu.toUpperCase()}: ${String(mS).padStart(2,'0')}:${String(sS).padStart(2,'0')}`;
+            foundCD = true;
+        }
+    });
+    if(!foundCD) cdBox.style.display = "none";
+}
         // FUNGSI UNTUK MENUTUP KOTAK SECARA MANUAL
         function tutupModal() {
             document.getElementById('modal-azan').style.display = "none";

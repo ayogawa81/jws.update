@@ -115,9 +115,15 @@
     <div style="position:fixed; top:20px; right:20px; font-size:35px; z-index:100; background:rgba(0,0,0,0.5); border-radius:50%; padding:5px;" onclick="togglePanel()">⚙️</div>
     <div class="header"><h1 id="n-satuan">STAFLOG KORPASGAT</h1></div>
 
+    <!-- Bagian Jam Utama -->
+<div id="jam-utama" style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
     <div id="jam">
-    <span id="h">00</span>:<span id="m">00</span>:<span id="s">00</span>
-    <div id="countdown-box" style="font-size: 2.8rem; color: #ffffff; padding: 10px 50px; border-radius: 15px; border: 3px solid #fff; margin-top: -10px; display: none; font-weight: bold; text-align: center; z-index: 2;">...</div>
+        <span id="h">00</span>:<span id="m">00</span>:<span id="s">00</span>
+    </div>
+    <!-- Pindahkan countdown ke bawah jam agar tidak menimpa -->
+    <div id="countdown-box" style="font-size: 2.8rem; color: #ffffff; padding: 10px 50px; border-radius: 15px; border: 3px solid #fff; display: none; font-weight: bold; text-align: center; z-index: 2; background: rgba(0,0,0,0.7);">
+        ...
+    </div>
 </div>
     
     <div id="tgl-container">

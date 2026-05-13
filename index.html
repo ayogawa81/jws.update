@@ -157,174 +157,174 @@
     </div>
 
     <script>
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        const player = document.getElementById('mainPlayer');
-        let audioReady = false;
-        let sudahBunyi = "";
-        let isIqomah = false; // Tambahkan ini agar tidak error
-        let iqomahTime = 0;   // Tambahkan ini agar tidak error
-        
-        // LOGIKA SLIDESHOW
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
+    // 1. DEKLARASI VARIABEL GLOBAL (Hanya satu kali)
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const player = document.getElementById('mainPlayer');
+    let audioReady = false;
+    let sudahBunyi = "";
+    let isIqomah = false; 
+    let iqomahTime = 0;   
+    const baseURL = "https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/";
 
-       function nextSlide() {
-        slides[currentSlide].classList.remove('active');
-        currentSlide = (currentSlide + 1) % slides.length;
-        slides[currentSlide].classList.add('active');
+    // 2. LOGIKA SLIDESHOW
+    function nextSlide() {
+        if (slides.length > 0) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
         }
-        setInterval(nextSlide, 10000); // Ganti gambar setiap 10 detik
+    }
+    setInterval(nextSlide, 10000);
 
-        // LOGIKA JWS (Sesuai kode awal kamu)
-        const player = document.getElementById('mainPlayer');
-        let audioReady = false;
-        let sudahBunyi = "";
-        const baseURL = "https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/";
+    // 3. FUNGSI UTAMA UPDATE WAKTU
+    function updateWaktu() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const s = String(now.getSeconds()).padStart(2, '0');
+        const hm = h + ":" + m;
 
-       // FUNGSI UTAMA UPDATE WAKTU
-function updateWaktu() {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    const s = String(now.getSeconds()).padStart(2, '0');
-    const hm = h + ":" + m;
+        // Update tampilan jam
+        document.getElementById('h').innerText = h;
+        document.getElementById('m').innerText = m;
+        document.getElementById('s').innerText = s;
+        
+        // Update Tanggal Masehi
+        const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+        const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        document.getElementById('tgl-masehi').innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
 
-    // Update tampilan jam
-    document.getElementById('h').innerText = h;
-    document.getElementById('m').innerText = m;
-    document.getElementById('s').innerText = s;
-    
-    // Update Tanggal Masehi
-    const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-    document.getElementById('tgl-masehi').innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
+        // Update Tanggal Hijriah
+        try {
+            const optH = { day: 'numeric', month: 'long', year: 'numeric' };
+            const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
+            document.getElementById('tgl-hijriah').innerText = hijri;
+        } catch(e) { 
+            document.getElementById('tgl-hijriah').innerText = "Update Kalender..."; 
+        }
 
-    // Update Tanggal Hijriah
-    try {
-        const optH = { day: 'numeric', month: 'long', year: 'numeric' };
-        const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
-        document.getElementById('tgl-hijriah').innerText = hijri;
-    } catch(e) { 
-        document.getElementById('tgl-hijriah').innerText = "Update Kalender..."; 
+        // Jalankan logika jadwal shalat & iqomah
+        if (isIqomah) {
+            prosesIqomah();
+        } else {
+            cekJadwalBaru(now, hm);
+        }
     }
 
-    // Jalankan logika jadwal shalat & iqomah
-    if (isIqomah) {
-        prosesIqomah();
-    } else {
-        cekJadwalBaru(now, hm); // Pastikan nama fungsi sesuai
+    // 4. LOGIKA JADWAL & COUNTDOWN
+    function cekJadwalBaru(now, hm) {
+        const jadwal = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
+        let cdBox = document.getElementById('countdown-box');
+        let foundCD = false;
+
+        jadwal.forEach(waktu => {
+            const elJadwal = document.getElementById('t-' + waktu);
+            if (!elJadwal) return;
+
+            const targetStr = elJadwal.innerText;
+            const [tH, tM] = targetStr.split(':').map(Number);
+            const targetDate = new Date(); 
+            targetDate.setHours(tH, tM, 0);
+            
+            const selisih = (targetDate - now) / 1000;
+
+            if (hm === targetStr && sudahBunyi !== waktu) {
+                sudahBunyi = waktu;
+                document.getElementById('azan-name').innerText = waktu;
+                document.getElementById('modal-azan').style.display = "flex";
+                
+                let fileName = localStorage.getItem('s-' + waktu);
+                if(fileName) {
+                    player.src = baseURL + fileName;
+                    player.play().catch(e => console.log("Audio play blocked"));
+                }
+            } 
+            else if (selisih > 0 && selisih <= 600) { 
+                const mS = Math.floor(selisih / 60); 
+                const sS = Math.floor(selisih % 60);
+                cdBox.style.display = "block";
+                cdBox.style.backgroundColor = "rgba(239, 68, 68, 0.8)"; 
+                cdBox.innerText = `MENUJU ${waktu.toUpperCase()}: ${String(mS).padStart(2,'0')}:${String(sS).padStart(2,'0')}`;
+                foundCD = true;
+            }
+        });
+        
+        if(!foundCD && !isIqomah) cdBox.style.display = "none";
     }
-}
+
+    // 5. LOGIKA IQOMAH
+    player.onended = function() {
+        document.getElementById('modal-azan').style.display = "none";
+        isIqomah = true;
+        let jedaMenit = parseInt(localStorage.getItem('jedaIqo')) || 10;
+        iqomahTime = jedaMenit * 60;
+        let cdBox = document.getElementById('countdown-box');
+        cdBox.style.display = "block";
+        cdBox.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+    };
 
     function prosesIqomah() {
-    let cdBox = document.getElementById('countdown-box');
-    if (iqomahTime > 0) {
-        iqomahTime--;
-        const mI = Math.floor(iqomahTime / 60);
-        const sI = iqomahTime % 60;
-        cdBox.innerText = `IQOMAH: ${String(mI).padStart(2,'0')}:${String(sI).padStart(2,'0')}`;
-    } else {
-        cdBox.innerText = "WAKTUNYA SALAT";
-        setTimeout(() => {
-            isIqomah = false;
-            sudahBunyi = ""; 
-            cdBox.style.display = "none";
-        }, 20000);
-    }
-}
- 
-
-// LOGIKA JADWAL & COUNTDOWN
-function cekJadwalBaru(now, hm) {
-    const jadwal = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
-    let cdBox = document.getElementById('countdown-box');
-    let foundCD = false;
-
-    jadwal.forEach(waktu => {
-        const targetStr = document.getElementById('t-' + waktu).innerText;
-        const [tH, tM] = targetStr.split(':').map(Number);
-        const targetDate = new Date(); 
-        targetDate.setHours(tH, tM, 0);
-        
-        const selisih = (targetDate - now) / 1000;
-
-        // Waktunya Azan
-        if (hm === targetStr && sudahBunyi !== waktu) {
-            sudahBunyi = waktu;
-            document.getElementById('azan-name').innerText = waktu;
-            document.getElementById('modal-azan').style.display = "flex";
-            
-            // Ambil file audio dari setting
-            let fileName = localStorage.getItem('s-' + waktu);
-            if(fileName) {
-                player.src = "https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/" + fileName;
-                player.play().catch(e => console.log("Audio play blocked"));
-            }
-        } 
-        // Countdown 10 Menit Sebelum Azan
-        else if (selisih > 0 && selisih <= 600) { 
-            const mS = Math.floor(selisih / 60); 
-            const sS = Math.floor(selisih % 60);
-            cdBox.style.display = "block";
-            cdBox.style.backgroundColor = "rgba(239, 68, 68, 0.8)"; 
-            cdBox.innerText = `MENUJU ${waktu.toUpperCase()}: ${String(mS).padStart(2,'0')}:${String(sS).padStart(2,'0')}`;
-            foundCD = true;
+        let cdBox = document.getElementById('countdown-box');
+        if (iqomahTime > 0) {
+            iqomahTime--;
+            const mI = Math.floor(iqomahTime / 60);
+            const sI = iqomahTime % 60;
+            cdBox.innerText = `IQOMAH: ${String(mI).padStart(2,'0')}:${String(sI).padStart(2,'0')}`;
+        } else {
+            cdBox.innerText = "WAKTUNYA SALAT";
+            setTimeout(() => {
+                isIqomah = false;
+                sudahBunyi = ""; 
+                cdBox.style.display = "none";
+            }, 20000);
         }
-    });
-    
-    if(!foundCD && !isIqomah) cdBox.style.display = "none";
-}
-          // Fungsi ini akan dipanggil otomatis SAAT AUDIO ADZAN SELESAI
-// LOGIKA IQOMAH
-player.onended = function() {
-    document.getElementById('modal-azan').style.display = "none";
-    isIqomah = true;
-    let jedaMenit = parseInt(localStorage.getItem('jedaIqo')) || 10;
-    iqomahTime = jedaMenit * 60;
-    document.getElementById('countdown-box').style.display = "block";
-    document.getElementById('countdown-box').style.backgroundColor = "rgba(0, 0, 0, 0.7)";
-};
-        // FUNGSI PENDUKUNG (Save, Load, Toggle)
-function tutupModal() { document.getElementById('modal-azan').style.display = "none"; player.pause(); }
-
-function aktifkanAudio() {
-    if(!audioReady) {
-        audioReady = true;
-        player.play().then(() => player.pause());
-        document.getElementById('audio-status').style.display = "block";
     }
-}
 
-        function muatData() {
-    document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
-    document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "";
-    document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "Salatlah tepat pada waktunya.";
-    document.getElementById('in-run').value = localStorage.getItem('tJalan') || "";
-    document.getElementById('in-lat').value = localStorage.getItem('lat') || "";
-    document.getElementById('in-lon').value = localStorage.getItem('lon') || "";
-    ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
-        document.getElementById('in-' + s).value = localStorage.getItem('s-' + s) || "";
-    });
-}
+    // 6. FUNGSI PENDUKUNG (Save, Load, Toggle)
+    function tutupModal() { document.getElementById('modal-azan').style.display = "none"; player.pause(); }
 
-       function saveData() {
-    localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
-    localStorage.setItem('tJalan', document.getElementById('in-run').value);
-    localStorage.setItem('lat', document.getElementById('in-lat').value);
-    localStorage.setItem('lon', document.getElementById('in-lon').value);
-    ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
-        localStorage.setItem('s-' + s, document.getElementById('in-' + s).value);
-    });
-    location.reload();
-}
+    function aktifkanAudio() {
+        if(!audioReady) {
+            audioReady = true;
+            player.play().then(() => player.pause());
+            document.getElementById('audio-status').style.display = "block";
+        }
+    }
 
-       function togglePanel() { 
-    const p = document.getElementById("panel");
-    p.style.display = (p.style.display === "block") ? "none" : "block"; 
-}
+    function muatData() {
+        document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
+        document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "";
+        document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "Salatlah tepat pada waktunya.";
+        document.getElementById('in-run').value = localStorage.getItem('tJalan') || "";
+        document.getElementById('in-lat').value = localStorage.getItem('lat') || "";
+        document.getElementById('in-lon').value = localStorage.getItem('lon') || "";
+        ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
+            document.getElementById('in-' + s).value = localStorage.getItem('s-' + s) || "";
+        });
+    }
 
-window.onload = () => { muatData(); updateWaktu(); setInterval(updateWaktu, 1000); };
-    </script>
+    function saveData() {
+        localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
+        localStorage.setItem('tJalan', document.getElementById('in-run').value);
+        localStorage.setItem('lat', document.getElementById('in-lat').value);
+        localStorage.setItem('lon', document.getElementById('in-lon').value);
+        ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
+            localStorage.setItem('s-' + s, document.getElementById('in-' + s).value);
+        });
+        location.reload();
+    }
+
+    function togglePanel() { 
+        const p = document.getElementById("panel");
+        p.style.display = (p.style.display === "block") ? "none" : "block"; 
+    }
+
+    window.onload = () => { 
+        muatData(); 
+        updateWaktu(); 
+        setInterval(updateWaktu, 1000); 
+    };
+</script>
 </body>
 </html>

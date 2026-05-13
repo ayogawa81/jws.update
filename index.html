@@ -156,8 +156,8 @@
         <p onclick="togglePanel()" style="text-align:center; color:gray; cursor:pointer; margin-top:20px;">[ TUTUP ]</p>
     </div>
 
-    <script>
-    // 1. DEKLARASI VARIABEL GLOBAL (Hanya satu kali)
+   <script>
+    // 1. DEKLARASI VARIABEL GLOBAL
     let currentSlide = 0;
     const slides = document.querySelectorAll('.slide');
     const player = document.getElementById('mainPlayer');
@@ -185,35 +185,33 @@
         const s = String(now.getSeconds()).padStart(2, '0');
         const hm = h + ":" + m;
 
-        // Update tampilan jam
         document.getElementById('h').innerText = h;
         document.getElementById('m').innerText = m;
         document.getElementById('s').innerText = s;
         
-        // Update Tanggal Masehi
+        // Update Tanggal
         const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
         const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         document.getElementById('tgl-masehi').innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
 
-        // Update Tanggal Hijriah
         try {
             const optH = { day: 'numeric', month: 'long', year: 'numeric' };
             const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
             document.getElementById('tgl-hijriah').innerText = hijri;
         } catch(e) { 
-            document.getElementById('tgl-hijriah').innerText = "Update Kalender..."; 
+            document.getElementById('tgl-hijriah').innerText = "..."; 
         }
 
-        // Jalankan logika jadwal shalat & iqomah
+        // KONTROL UTAMA: Jika sedang Iqomah jalankan hitung mundur, jika tidak cek jadwal azan
         if (isIqomah) {
             prosesIqomah();
         } else {
-            cekJadwalBaru(now, hm);
+            cekJadwalAzan(now, hm);
         }
     }
 
-    // 4. LOGIKA JADWAL & COUNTDOWN
-    function cekJadwalBaru(now, hm) {
+    // 4. LOGIKA CEK AZAN
+    function cekJadwalAzan(now, hm) {
         const jadwal = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
         let cdBox = document.getElementById('countdown-box');
         let foundCD = false;
@@ -229,17 +227,12 @@
             
             const selisih = (targetDate - now) / 1000;
 
+            // JIKA WAKTUNYA TIBA
             if (hm === targetStr && sudahBunyi !== waktu) {
                 sudahBunyi = waktu;
-                document.getElementById('azan-name').innerText = waktu;
-                document.getElementById('modal-azan').style.display = "flex";
-                
-                let fileName = localStorage.getItem('s-' + waktu);
-                if(fileName) {
-                    player.src = baseURL + fileName;
-                    player.play().catch(e => console.log("Audio play blocked"));
-                }
+                mulaiAzan(waktu);
             } 
+            // JIKA MENUJU WAKTU (Countdown 10 menit)
             else if (selisih > 0 && selisih <= 600) { 
                 const mS = Math.floor(selisih / 60); 
                 const sS = Math.floor(selisih % 60);
@@ -253,16 +246,42 @@
         if(!foundCD && !isIqomah) cdBox.style.display = "none";
     }
 
-    // 5. LOGIKA IQOMAH
-    player.onended = function() {
+    // 5. FUNGSI MULAI AZAN
+    function mulaiAzan(waktu) {
+        document.getElementById('azan-name').innerText = waktu;
+        document.getElementById('modal-azan').style.display = "flex";
+        
+        let fileName = localStorage.getItem('s-' + waktu);
+        if(fileName) {
+            player.src = baseURL + fileName;
+            player.play().catch(e => console.log("Audio diblokir browser, klik layar!"));
+        }
+    }
+
+    // 6. LOGIKA SETELAH AZAN (PINDAH KE IQOMAH)
+    // Fungsi ini jalan saat audio selesai ATAU tombol tutup diklik
+    function mulaiHitungIqomah() {
         document.getElementById('modal-azan').style.display = "none";
+        player.pause();
+        
         isIqomah = true;
-        let jedaMenit = parseInt(localStorage.getItem('jedaIqo')) || 10;
+        let jedaMenit = parseInt(localStorage.getItem('jedaIqo')) || 10; // Default 10 menit
         iqomahTime = jedaMenit * 60;
+        
         let cdBox = document.getElementById('countdown-box');
         cdBox.style.display = "block";
-        cdBox.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+        cdBox.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
+    }
+
+    // Jika audio azan habis otomatis
+    player.onended = function() {
+        mulaiHitungIqomah();
     };
+
+    // Jika tombol "TUTUP" di modal diklik
+    function tutupModal() {
+        mulaiHitungIqomah();
+    }
 
     function prosesIqomah() {
         let cdBox = document.getElementById('countdown-box');
@@ -273,17 +292,16 @@
             cdBox.innerText = `IQOMAH: ${String(mI).padStart(2,'0')}:${String(sI).padStart(2,'0')}`;
         } else {
             cdBox.innerText = "WAKTUNYA SALAT";
+            cdBox.style.backgroundColor = "#ef4444";
             setTimeout(() => {
                 isIqomah = false;
-                sudahBunyi = ""; 
+                sudahBunyi = ""; // Reset agar besok bisa bunyi lagi
                 cdBox.style.display = "none";
-            }, 20000);
+            }, 30000); // Tampilan "Waktunya Salat" selama 30 detik
         }
     }
 
-    // 6. FUNGSI PENDUKUNG (Save, Load, Toggle)
-    function tutupModal() { document.getElementById('modal-azan').style.display = "none"; player.pause(); }
-
+    // 7. FUNGSI PENDUKUNG
     function aktifkanAudio() {
         if(!audioReady) {
             audioReady = true;
@@ -312,6 +330,7 @@
         ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
             localStorage.setItem('s-' + s, document.getElementById('in-' + s).value);
         });
+        alert("Data Berhasil Disimpan!");
         location.reload();
     }
 

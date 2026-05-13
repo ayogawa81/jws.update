@@ -140,6 +140,8 @@
         <input type="text" id="in-nama">
         <b>Running Text:</b>
         <input type="text" id="in-run">
+        <b>Jeda Iqomah (Menit):</b>
+        <input type="number" id="in-iqo" placeholder="Contoh: 10">
         <b>Koordinat (Latitude, Longitude):</b>
         <div style="display:flex; gap:10px;">
             <input type="text" id="in-lat" placeholder="Lat: -6.9175">
@@ -323,10 +325,12 @@
         cdBox.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
     }
 
-    // Jika audio azan habis otomatis
     player.onended = function() {
+    // Hanya mulai Iqomah jika memang sedang dalam waktu Azan
+    if (sudahBunyi !== "") {
         mulaiHitungIqomah();
-    };
+    }
+};
 
     // Jika tombol "TUTUP" di modal diklik
     function tutupModal() {
@@ -367,6 +371,7 @@
         document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "";
         document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "Salatlah tepat pada waktunya.";
         document.getElementById('in-run').value = localStorage.getItem('tJalan') || "";
+        document.getElementById('in-iqo').value = localStorage.getItem('jedaIqo') || "5";
         document.getElementById('in-lat').value = localStorage.getItem('lat') || "";
         document.getElementById('in-lon').value = localStorage.getItem('lon') || "";
         ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
@@ -377,6 +382,7 @@
     function saveData() {
         localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
         localStorage.setItem('tJalan', document.getElementById('in-run').value);
+        localStorage.setItem('jedaIqo', document.getElementById('in-iqo').value);
         localStorage.setItem('lat', document.getElementById('in-lat').value);
         localStorage.setItem('lon', document.getElementById('in-lon').value);
         ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {

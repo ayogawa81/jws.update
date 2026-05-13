@@ -6,7 +6,8 @@
     <title>JWS KORPASGAT V32 FINAL FIX - SLIDESHOW</title>
     <!-- 1. PASANG LINK GOOGLE FONT DI SINI (Sebelum Style) -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
-    
+    <!-- Library Perhitungan Jadwal Shalat -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/adhan/3.2.0/Adhan.min.js"></script>
     <style>
        /* 2. BARU SETTING DI DALAM CSS */
 #jam { 
@@ -366,6 +367,28 @@
         }).catch(e => console.log("Klik layar untuk aktifkan audio"));
     }
 }
+       function hitungJadwal() {
+    // Ambil koordinat dari memori (LocalStorage)
+    const lat = parseFloat(localStorage.getItem('lat')) || -7.01; // Default Kab Bandung
+    const lon = parseFloat(localStorage.getItem('lon')) || 107.551;
+
+    const coordinates = new adhan.Coordinates(lat, lon);
+    const params = adhan.CalculationMethod.Kemenag(); // Standar Indonesia
+    const date = new Date();
+    const prayerTimes = new adhan.PrayerTimes(coordinates, date, params);
+
+    // Format jam ke HH:mm
+    const formatTime = (time) => {
+        return time.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+    };
+
+    // Update tampilan di layar
+    document.getElementById('t-subuh').innerText = formatTime(prayerTimes.fajr);
+    document.getElementById('t-dzuhur').innerText = formatTime(prayerTimes.dhuhr);
+    document.getElementById('t-ashar').innerText = formatTime(prayerTimes.asr);
+    document.getElementById('t-maghrib').innerText = formatTime(prayerTimes.maghrib);
+    document.getElementById('t-isya').innerText = formatTime(prayerTimes.isha);
+}
     function muatData() {
         document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
         document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "";
@@ -399,6 +422,7 @@
 
     window.onload = () => { 
         muatData(); 
+        hitungJadwal();
         updateWaktu(); 
         setInterval(updateWaktu, 1000); 
     };

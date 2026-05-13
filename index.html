@@ -351,16 +351,17 @@
         }
     }
 
-    // 7. FUNGSI PENDUKUNG
     function aktifkanAudio() {
-            if(!audioReady) {
-                audioReady = true;
-                player.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
-                player.play();
-                document.getElementById('audio-status').style.display = "block";
-            }
-        }
-
+    if(!audioReady) {
+        // Gunakan Audio objek baru untuk pancingan, bukan 'player' utama
+        let pancingan = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==");
+        pancingan.play().then(() => {
+            audioReady = true;
+            document.getElementById('audio-status').style.display = "block";
+            document.getElementById('audio-status').innerText = "● AUDIO SIAP";
+        }).catch(e => console.log("Klik layar untuk aktifkan audio"));
+    }
+}
     function muatData() {
         document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
         document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "";

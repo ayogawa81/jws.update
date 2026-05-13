@@ -184,33 +184,36 @@
     }, 10000);
 
     // 3. UPDATE WAKTU & TANGGAL
-    function updateWaktu() {
+   function updateWaktu() {
         const now = new Date();
-        document.getElementById('h').innerText = String(now.getHours()).padStart(2, '0');
-        document.getElementById('m').innerText = String(now.getMinutes()).padStart(2, '0');
-        document.getElementById('s').innerText = String(now.getSeconds()).padStart(2, '0');
+        
+        // Pastikan elemen ada sebelum diisi untuk mencegah crash
+        const elH = document.getElementById('h');
+        const elM = document.getElementById('m');
+        const elS = document.getElementById('s');
 
-        const hm = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+        if (elH && elM && elS) {
+            elH.innerText = String(now.getHours()).padStart(2, '0');
+            elM.innerText = String(now.getMinutes()).padStart(2, '0');
+            elS.innerText = String(now.getSeconds()).padStart(2, '0');
+        }
 
-        // Masehi
-        const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-        const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        document.getElementById('tgl-masehi').innerText = `${hari[now.getDay()]}, ${now.getDate()} ${bulan[now.getMonth()]} ${now.getFullYear()}`;
+        // Update Tanggal Masehi
+        const optM = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('tgl-masehi').innerText = now.toLocaleDateString('id-ID', optM);
 
-        // Hijriah
+        // Update Hijriah dengan TRY-CATCH agar jam tidak jadi 00:00:00 jika gagal
         try {
             const optH = { day: 'numeric', month: 'long', year: 'numeric' };
             const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
             document.getElementById('tgl-hijriah').innerText = hijri;
-        } catch(e) { document.getElementById('tgl-hijriah').innerText = "Memuat..."; }
-
-        if (isIqomah) {
-            prosesIqomah();
-        } else {
-            cekJadwalAzan(now, hm);
+        } catch(e) {
+            document.getElementById('tgl-hijriah').innerText = "Koneksi Bermasalah"; 
         }
-    }
 
+        const hm = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+        if (isIqomah) { prosesIqomah(); } else { cekJadwalAzan(now, hm); }
+    }
     // 4. CEK JADWAL & COUNTDOWN
     function cekJadwalAzan(now, hm) {
         const jadwal = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
@@ -296,14 +299,19 @@
         document.getElementById('t-isya').innerText = format(prayerTimes.isha);
     }
 
+    // Memuat Data Pengaturan dengan Nilai Cadangan agar tidak kosong
     function muatData() {
+        // Jika data di localStorage kosong, gunakan teks default ini
         document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
         document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
+        
         document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "Salatlah tepat pada waktunya.";
         document.getElementById('in-run').value = localStorage.getItem('tJalan') || "";
-        document.getElementById('in-iqo').value = localStorage.getItem('jedaIqo') || "10";
+        
         document.getElementById('in-lat').value = localStorage.getItem('lat') || "-7.01";
-        document.getElementById('in-lon').value = localStorage.getItem('lon') || "107.551";
+        document.getElementById('in-lon').value = localStorage.getItem('lon') || "107.55";
+        
+        // Memastikan field audio juga terisi di panel
         ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
             document.getElementById('in-' + s).value = localStorage.getItem('s-' + s) || "";
         });

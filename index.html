@@ -333,12 +333,13 @@
 
     // 7. FUNGSI PENDUKUNG
     function aktifkanAudio() {
-        if(!audioReady) {
-            audioReady = true;
-            player.play().then(() => player.pause());
-            document.getElementById('audio-status').style.display = "block";
+            if(!audioReady) {
+                audioReady = true;
+                player.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
+                player.play();
+                document.getElementById('audio-status').style.display = "block";
+            }
         }
-    }
 
     function muatData() {
         document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";

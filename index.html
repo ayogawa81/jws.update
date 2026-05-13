@@ -210,6 +210,36 @@
         }
     }
 
+        function cekAdzan(hm) {
+            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
+                const target = document.getElementById('t-' + s).innerText;
+                const card = document.getElementById('c-' + s);
+                if(hm === target) {
+                    card.classList.add('active-now');
+                    if(audioReady && sudahBunyi !== s) {
+                        let userInput = localStorage.getItem('s-' + s);
+                        
+                        // Jika input kosong, otomatis panggil nama waktu shalat .mp3 (misal: subuh.mp3)
+                        // Jika input diisi, panggil nama file tersebut
+                        let fileName = (userInput && userInput.trim() !== "") ? userInput.trim() : (s.charAt(0).toUpperCase() + s.slice(1) + ".mp3");
+                        
+                        // Jika nama filenya "subuh" (huruf kecil semua di array), kita sesuaikan dengan nama file di GitHub
+                        if(s === "subuh") fileName = "subuh.mp3";
+                        if(s === "dzuhur") fileName = "dzuhur.mp3";
+                        if(s === "ashar") fileName = "AdzanMalaysia.mp3";
+                        if(s === "maghrib") fileName = "Azansupri.mp3";
+                        if(s === "isya") fileName = "Isya.mp3";
+
+                        sudahBunyi = s;
+                        player.src = baseURL + fileName;
+                        player.play().catch(err => console.log("Gagal putar audio: " + baseURL + fileName));
+                    }
+                } else {
+                    card.classList.remove('active-now');
+                    if(sudahBunyi === s && hm !== target) sudahBunyi = "";
+                }
+            });
+        }
     // 4. LOGIKA CEK AZAN
     function cekJadwalAzan(now, hm) {
         const jadwal = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];

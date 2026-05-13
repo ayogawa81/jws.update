@@ -6,6 +6,7 @@
     <title>JWS KORPASGAT V32 FINAL FIX - SLIDESHOW</title>
     <!-- 1. PASANG LINK GOOGLE FONT DI SINI (Sebelum Style) -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
     <!-- Library Perhitungan Jadwal Shalat -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/adhan/3.2.0/Adhan.min.js"></script>
     <style>
@@ -35,10 +36,7 @@
     color: #ffffff; 
 }
 
-/* Memastikan titik dua juga ikut menyala emas */
-#jam {
-    color: #fbbf24; /* Memberikan warna dasar emas pada pemisah titik dua */
-}
+
         :root { --accent: #fbbf24; --active: #ef4444; }
         
         body { 
@@ -187,37 +185,46 @@
     setInterval(nextSlide, 10000);
 
     // 3. FUNGSI UTAMA UPDATE WAKTU
-    function updateWaktu() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2, '0');
-        const m = String(now.getMinutes()).padStart(2, '0');
-        const s = String(now.getSeconds()).padStart(2, '0');
-        const hm = h + ":" + m;
+   function updateWaktu() {
+    const now = new Date();
+    
+    // 1. Ambil elemen Jam
+    const elH = document.getElementById('h');
+    const elM = document.getElementById('m');
+    const elS = document.getElementById('s');
 
-        document.getElementById('h').innerText = h;
-        document.getElementById('m').innerText = m;
-        document.getElementById('s').innerText = s;
-        
-        // Update Tanggal
-        const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-        const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        document.getElementById('tgl-masehi').innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
-
-        try {
-            const optH = { day: 'numeric', month: 'long', year: 'numeric' };
-            const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
-            document.getElementById('tgl-hijriah').innerText = hijri;
-        } catch(e) { 
-            document.getElementById('tgl-hijriah').innerText = "..."; 
-        }
-
-        // KONTROL UTAMA: Jika sedang Iqomah jalankan hitung mundur, jika tidak cek jadwal azan
-        if (isIqomah) {
-            prosesIqomah();
-        } else {
-            cekJadwalAzan(now, hm);
-        }
+    if (elH && elM && elS) {
+        elH.innerText = String(now.getHours()).padStart(2, '0');
+        elM.innerText = String(now.getMinutes()).padStart(2, '0');
+        elS.innerText = String(now.getSeconds()).padStart(2, '0');
     }
+
+    const hm = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+
+    // 2. Update Tanggal Masehi
+    const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    const tglMasehi = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
+    document.getElementById('tgl-masehi').innerText = tglMasehi;
+
+    // 3. Update Tanggal Hijriah (Gunakan Try-Catch agar jika error, jam tidak mati)
+    try {
+        // Gunakan locale id-ID yang lebih standar untuk Hijriah
+        const optH = { day: 'numeric', month: 'long', year: 'numeric' };
+        const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
+        document.getElementById('tgl-hijriah').innerText = hijri;
+    } catch(e) { 
+        console.log("Gagal memuat Hijriah:", e);
+        document.getElementById('tgl-hijriah').innerText = "20 Zulkaidah 1447 H"; // Fallback manual jika sistem gagal
+    }
+
+    // 4. Kontrol Azan & Iqomah
+    if (isIqomah) {
+        prosesIqomah();
+    } else {
+        cekJadwalAzan(now, hm);
+    }
+}
 
         function cekAdzan(hm) {
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {

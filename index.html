@@ -276,17 +276,37 @@
         if(!foundCD && !isIqomah) cdBox.style.display = "none";
     }
 
-    // 5. FUNGSI MULAI AZAN
-    function mulaiAzan(waktu) {
-        document.getElementById('azan-name').innerText = waktu;
-        document.getElementById('modal-azan').style.display = "flex";
-        
-        let fileName = localStorage.getItem('s-' + waktu);
-        if(fileName) {
-            player.src = baseURL + fileName;
-            player.play().catch(e => console.log("Audio diblokir browser, klik layar!"));
-        }
+   function mulaiAzan(waktu) {
+    document.getElementById('azan-name').innerText = waktu.toUpperCase();
+    document.getElementById('modal-azan').style.display = "flex";
+    
+    // 1. Ambil nama file dari input pengaturan
+    let fileName = localStorage.getItem('s-' + waktu);
+    
+    // 2. Jika di pengaturan KOSONG, gunakan nama file default sesuai daftar GitHub Anda
+    if (!fileName || fileName.trim() === "") {
+        const defaultFiles = {
+            "subuh": "subuh.mp3",
+            "dzuhur": "dzuhur.mp3",
+            "ashar": "AdzanMalaysia.mp3",
+            "maghrib": "Azansupri.mp3",
+            "isya": "Isya.mp3"
+        };
+        fileName = defaultFiles[waktu];
     }
+    
+    // 3. Setel sumber audio dan putar
+    player.src = baseURL + fileName;
+    player.load(); // Penting: Memuat ulang source baru
+    
+    // Gunakan promise untuk memastikan audio terputar
+    let playPromise = player.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(error => {
+            console.log("Autoplay dicegah browser: ", error);
+        });
+    }
+}
 
     // 6. LOGIKA SETELAH AZAN (PINDAH KE IQOMAH)
     // Fungsi ini jalan saat audio selesai ATAU tombol tutup diklik
